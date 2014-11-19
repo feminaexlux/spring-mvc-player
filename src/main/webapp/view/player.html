@@ -1,0 +1,10 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <title>Media Player</title>
+    <body>
+        <h1>Media Player</h1>
+        <ol th:each="file : ${music}">
+            <li th:text="${file.name}">Music name</li>
+        </ol>
+    </body>
+</html>
