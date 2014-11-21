@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class PlayerController {
 
-    @Autowired
-    private MediaService mediaService;
+	@Autowired
+	private MediaService mediaService;
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index(Model model) {
-        // More proof of concept that the service is actually being wired in correctly
-        model.addAttribute("music", mediaService.getAll(MediaType.MUSIC));
-        return "player";
-    }
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String index(Model model) {
+		// More proof of concept that the service is actually being wired in correctly
+		model.addAttribute("music", mediaService.getAll(MediaType.MUSIC));
+		return "player";
+	}
 
 }

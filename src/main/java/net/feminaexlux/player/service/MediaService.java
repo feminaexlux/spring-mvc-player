@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface MediaService {
 
-    List<Media> getAll(MediaType mediaType);
+	List<Media> getAll(MediaType mediaType);
 
 }

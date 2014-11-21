@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PlayerConfig {
 
-    @Bean
-    public MediaService mediaService() {
-        return new MediaServiceImpl();
-    }
+	@Bean
+	public MediaService mediaService() {
+		return new MediaServiceImpl();
+	}
 
 }

@@ -11,8 +11,8 @@ import java.util.List;
 @Service
 public class MediaServiceImpl implements MediaService {
 
-    @Override
-    public List<Media> getAll(MediaType mediaType) {
-        return Collections.emptyList();
-    }
+	@Override
+	public List<Media> getAll(MediaType mediaType) {
+		return Collections.emptyList();
+	}
 }
