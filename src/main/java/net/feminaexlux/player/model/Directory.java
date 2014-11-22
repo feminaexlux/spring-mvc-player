@@ -53,23 +53,19 @@ public class Directory {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-
-		if (obj == this) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (obj.getClass() != getClass()) {
+		if (object == null || getClass() != object.getClass()) {
 			return false;
 		}
 
-		Directory other = (Directory) obj;
+		Directory that = (Directory) object;
 		return new EqualsBuilder()
-				.append(location, other.location)
-				.append(type, other.type)
+				.append(location, that.location)
+				.append(type, that.type)
 				.isEquals();
 	}
 

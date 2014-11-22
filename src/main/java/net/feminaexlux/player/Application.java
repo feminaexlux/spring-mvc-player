@@ -2,22 +2,34 @@ package net.feminaexlux.player;
 
 import com.mysql.jdbc.Driver;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
+import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
+import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
+import org.springframework.orm.jpa.vendor.OpenJpaDialect;
+import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-@Configuration
 @ComponentScan
+@Configuration
+@EnableJpaRepositories("net.feminaexlux.player.repository")
+@EnableTransactionManagement
 @EnableWebMvc
 public class Application extends WebMvcConfigurerAdapter {
 
@@ -56,10 +68,29 @@ public class Application extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public DataSourceTransactionManager transactionManager() throws SQLException {
-		DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+	public JpaTransactionManager transactionManager() throws SQLException {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
 		transactionManager.setDataSource(dataSource());
+		transactionManager.setEntityManagerFactory(entityManagerFactory());
 		return transactionManager;
+	}
+
+	@Bean
+	public EntityManagerFactory entityManagerFactory() throws SQLException {
+		String repositoryLocation = "net.feminaexlux.player.repository";
+
+		PersistenceUnitManager manager = new DefaultPersistenceUnitManager();
+
+		LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
+		bean.setDataSource(dataSource());
+		bean.setJpaDialect(new OpenJpaDialect());
+		bean.setJpaVendorAdapter(new OpenJpaVendorAdapter());
+		bean.setPackagesToScan(repositoryLocation);
+		bean.setPersistenceProvider(new PersistenceProviderImpl());
+		bean.setLoadTimeWeaver(new ReflectiveLoadTimeWeaver());
+		bean.afterPropertiesSet();
+
+		return bean.getObject();
 	}
 
 }

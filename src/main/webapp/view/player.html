@@ -13,6 +13,11 @@
     <ol th:each="file : ${music}">
         <li th:text="${file.name}">Music name</li>
     </ol>
+
+    <hr>
+    <ol th:each="type : ${types}">
+        <li th:text="type.type">Type name</li>
+    </ol>
 </section>
 <footer layout:fragment="footer">
     Testing

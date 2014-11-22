@@ -55,23 +55,19 @@ public class Type {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-
-		if (obj == this) {
+	public boolean equals(Object object) {
+		if (this == object) {
 			return true;
 		}
 
-		if (obj.getClass() != getClass()) {
+		if (object == null || getClass() != object.getClass()) {
 			return false;
 		}
 
-		Type otherType = (Type) obj;
+		Type that = (Type) object;
 		return new EqualsBuilder()
-				.append(type, otherType.type)
-				.append(extensions, otherType.extensions)
+				.append(type, that.type)
+				.append(extensions, that.extensions)
 				.isEquals();
 	}
 

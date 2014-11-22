@@ -1,6 +1,7 @@
 package net.feminaexlux.player.controller;
 
 import net.feminaexlux.player.service.MediaService;
+import net.feminaexlux.player.service.TypeService;
 import net.feminaexlux.player.type.MediaType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,11 +14,14 @@ public class PlayerController {
 
 	@Autowired
 	private MediaService mediaService;
+	@Autowired
+	private TypeService typeService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(Model model) {
 		// More proof of concept that the service is actually being wired in correctly
 		model.addAttribute("music", mediaService.getAll(MediaType.MUSIC));
+		model.addAttribute("types", typeService.getAll());
 		return "player";
 	}
 

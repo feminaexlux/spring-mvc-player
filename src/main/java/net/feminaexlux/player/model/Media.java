@@ -1,5 +1,8 @@
 package net.feminaexlux.player.model;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -58,5 +61,34 @@ public class Media {
 
 	public void setLocalPath(String localPath) {
 		this.localPath = localPath;
+	}
+
+	@Override
+	public boolean equals(Object object) {
+		if (this == object) {
+			return true;
+		}
+
+		if (object == null || getClass() != object.getClass()) {
+			return false;
+		}
+
+		Media that = (Media) object;
+		return new EqualsBuilder()
+				.append(checkSum, that.checkSum)
+				.append(directory, that.directory)
+				.append(name, that.name)
+				.append(localPath, that.localPath)
+				.isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(19, 29)
+				.append(checkSum)
+				.append(directory)
+				.append(name)
+				.append(localPath)
+				.toHashCode();
 	}
 }
