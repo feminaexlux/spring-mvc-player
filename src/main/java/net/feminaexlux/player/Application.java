@@ -2,7 +2,6 @@ package net.feminaexlux.player;
 
 import com.mysql.jdbc.Driver;
 import nz.net.ultraq.thymeleaf.LayoutDialect;
-import org.apache.openjpa.persistence.PersistenceProviderImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +10,6 @@ import org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager;
-import org.springframework.orm.jpa.persistenceunit.PersistenceUnitManager;
-import org.springframework.orm.jpa.vendor.OpenJpaDialect;
 import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -28,10 +24,16 @@ import java.sql.SQLException;
 
 @ComponentScan
 @Configuration
-@EnableJpaRepositories("net.feminaexlux.player.repository")
+@EnableJpaRepositories(Application.REPOSITORY)
 @EnableTransactionManagement
 @EnableWebMvc
 public class Application extends WebMvcConfigurerAdapter {
+
+	public static final String JDBC_PASSWORD = "media";
+	public static final String JDBC_URL = "jdbc:mysql://192.168.0.108/media";
+	public static final String JDBC_USER = "media";
+	public static final String MODEL = "net.feminaexlux.player.model";
+	public static final String REPOSITORY = "net.feminaexlux.player.repository";
 
 	@Bean
 	public ServletContextTemplateResolver templateResolver() {
@@ -43,17 +45,17 @@ public class Application extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
-	public SpringTemplateEngine templateEngine() {
+	public SpringTemplateEngine templateEngine(final ServletContextTemplateResolver templateResolver) {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-		templateEngine.setTemplateResolver(templateResolver());
+		templateEngine.setTemplateResolver(templateResolver);
 		templateEngine.addDialect(new LayoutDialect());
 		return templateEngine;
 	}
 
 	@Bean
-	public ThymeleafViewResolver viewResolver() {
+	public ThymeleafViewResolver viewResolver(final SpringTemplateEngine templateEngine) {
 		ThymeleafViewResolver viewResolver = new ThymeleafViewResolver();
-		viewResolver.setTemplateEngine(templateEngine());
+		viewResolver.setTemplateEngine(templateEngine);
 		return viewResolver;
 	}
 
@@ -61,35 +63,30 @@ public class Application extends WebMvcConfigurerAdapter {
 	public DataSource dataSource() throws SQLException {
 		SimpleDriverDataSource dataSource = new SimpleDriverDataSource();
 		dataSource.setDriverClass(Driver.class);
-		dataSource.setUsername("media");
-		dataSource.setPassword("media");
-		dataSource.setUrl("jdbc:mysql://192.168.0.108/media");
+		dataSource.setUsername(JDBC_USER);
+		dataSource.setPassword(JDBC_PASSWORD);
+		dataSource.setUrl(JDBC_URL);
 		return dataSource;
 	}
 
 	@Bean
-	public JpaTransactionManager transactionManager() throws SQLException {
+	public JpaTransactionManager transactionManager(final DataSource dataSource,
+	                                                final EntityManagerFactory entityManagerFactory) throws SQLException {
 		JpaTransactionManager transactionManager = new JpaTransactionManager();
-		transactionManager.setDataSource(dataSource());
-		transactionManager.setEntityManagerFactory(entityManagerFactory());
+		transactionManager.setDataSource(dataSource);
+		transactionManager.setEntityManagerFactory(entityManagerFactory);
 		return transactionManager;
 	}
 
 	@Bean
-	public EntityManagerFactory entityManagerFactory() throws SQLException {
-		String repositoryLocation = "net.feminaexlux.player.repository";
-
-		PersistenceUnitManager manager = new DefaultPersistenceUnitManager();
-
+	public EntityManagerFactory entityManagerFactory(final DataSource dataSource) throws SQLException {
 		LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
-		bean.setDataSource(dataSource());
-		bean.setJpaDialect(new OpenJpaDialect());
-		bean.setJpaVendorAdapter(new OpenJpaVendorAdapter());
-		bean.setPackagesToScan(repositoryLocation);
-		bean.setPersistenceProvider(new PersistenceProviderImpl());
-		bean.setLoadTimeWeaver(new ReflectiveLoadTimeWeaver());
-		bean.afterPropertiesSet();
 
+		bean.setDataSource(dataSource);
+		bean.setJpaVendorAdapter(new OpenJpaVendorAdapter());
+		bean.setLoadTimeWeaver(new ReflectiveLoadTimeWeaver());
+
+		bean.afterPropertiesSet();
 		return bean.getObject();
 	}
 

@@ -74,6 +74,6 @@ public class Directory {
 		return new HashCodeBuilder(17, 37)
 				.append(location)
 				.append(type)
-				.hashCode();
+				.toHashCode();
 	}
 }

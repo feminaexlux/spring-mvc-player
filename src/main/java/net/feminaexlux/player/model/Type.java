@@ -76,6 +76,6 @@ public class Type {
 		return new HashCodeBuilder(13, 31)
 				.append(type)
 				.append(extensions)
-				.hashCode();
+				.toHashCode();
 	}
 }

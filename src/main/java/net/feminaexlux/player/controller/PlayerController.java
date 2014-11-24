@@ -18,7 +18,7 @@ public class PlayerController {
 	private TypeService typeService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String index(Model model) {
+	public String index(final Model model) {
 		// More proof of concept that the service is actually being wired in correctly
 		model.addAttribute("music", mediaService.getAll(MediaType.MUSIC));
 		model.addAttribute("types", typeService.getAll());

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence" version="2.0">
+
+    <persistence-unit name="media-punit">
+        <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+        <class>net.feminaexlux.player.model.Directory</class>
+        <class>net.feminaexlux.player.model.Music</class>
+        <class>net.feminaexlux.player.model.Media</class>
+        <class>net.feminaexlux.player.model.Type</class>
+        <properties>
+            <property name="openjpa.ConnectionURL" value="jdbc:mysql://192.168.0.108:3306"/>
+            <property name="openjpa.ConnectionDriverName" value="com.mysql.jdbc.Driver"/>
+            <property name="openjpa.ConnectionUserName" value="media"/>
+            <property name="openjpa.ConnectionPassword" value="media"/>
+            <property name="openjpa.Log" value="DefaultLevel=TRACE, Tool=INFO"/>
+        </properties>
+    </persistence-unit>
+</persistence>
