@@ -1,4 +1,4 @@
-package net.feminaexlux.player.repository;
+package net.feminaexlux.player.model;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

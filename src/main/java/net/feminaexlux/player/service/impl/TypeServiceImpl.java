@@ -1,7 +1,7 @@
 package net.feminaexlux.player.service.impl;
 
 import net.feminaexlux.player.model.Type;
-import net.feminaexlux.player.repository.TypeRepository;
+import net.feminaexlux.player.model.TypeRepository;
 import net.feminaexlux.player.service.TypeService;
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
