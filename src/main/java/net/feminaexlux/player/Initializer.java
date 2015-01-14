@@ -1,7 +1,6 @@
 package net.feminaexlux.player;
 
 import net.feminaexlux.player.config.PlayerConfig;
-import net.feminaexlux.player.config.RepositoryConfig;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
@@ -16,7 +15,6 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 		return new Class<?>[]{
 				Application.class
 				, PlayerConfig.class
-				, RepositoryConfig.class
 		};
 	}
 
