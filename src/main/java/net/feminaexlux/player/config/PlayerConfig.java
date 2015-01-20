@@ -1,5 +1,6 @@
 package net.feminaexlux.player.config;
 
+import com.mysql.jdbc.Driver;
 import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.service.MediaService;
 import net.feminaexlux.player.service.ViewService;
@@ -25,6 +26,7 @@ public class PlayerConfig {
 
 	@Bean
 	public DSLContext database() throws SQLException {
+		DriverManager.registerDriver(new Driver());
 		Connection connection = DriverManager.getConnection(SQL_URL, SQL_USERNAME, SQL_PASSWORD);
 		return DSL.using(connection, SQLDialect.MYSQL);
 	}

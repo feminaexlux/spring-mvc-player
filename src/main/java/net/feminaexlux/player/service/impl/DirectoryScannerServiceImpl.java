@@ -1,9 +1,19 @@
 package net.feminaexlux.player.service.impl;
 
-import net.feminaexlux.player.model.tables.Directory;
 import net.feminaexlux.player.model.tables.TypeExtension;
 import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.type.MediaType;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
 import org.jooq.Result;
@@ -19,9 +29,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static net.feminaexlux.player.model.Tables.DIRECTORY;
+import static net.feminaexlux.player.model.Tables.MUSIC;
+import static net.feminaexlux.player.model.Tables.RESOURCE;
 import static net.feminaexlux.player.model.Tables.TYPE_EXTENSION;
 
 @Service
@@ -34,26 +51,34 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 	@Override
 	public void buildLibrary(final String directory, final MediaType type) throws IOException {
-		LibraryWalker walker = new LibraryWalker(type);
+		database.insertInto(DIRECTORY, DIRECTORY.LOCATION, DIRECTORY.TYPE, DIRECTORY.LASTSCANNED)
+				.values(directory, type.name(), new Timestamp(System.currentTimeMillis()))
+				.onDuplicateKeyIgnore()
+				.execute();
+
+		LibraryWalker walker = new LibraryWalker(directory, type);
 		Files.walkFileTree(Paths.get(directory), walker);
 	}
 
 	@Override
-	public void updateLibrary(final Directory directory, final MediaType type) {
+	public void updateLibrary(final String directory, final MediaType type) {
 
 	}
 
 	@Override
-	public void clearLibrary(final Directory directory, final MediaType type) {
+	public void clearLibrary(final String directory, final MediaType type) {
 
 	}
 
 	protected class LibraryWalker extends SimpleFileVisitor<Path> {
 
-		private List<String> validExtensions = new ArrayList<>();
+		private String directory;
+		private List<String> validExtensions = Collections.emptyList();
 
-		protected LibraryWalker(final MediaType mediaType) {
+		protected LibraryWalker(final String directory, final MediaType mediaType) {
 			super();
+
+			this.directory = directory;
 
 			TypeExtension te = TYPE_EXTENSION.as("te");
 			Result<Record1<String>> result = database.select(te.EXTENSION)
@@ -61,18 +86,24 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 					.where(te.TYPE.equal(mediaType.name()))
 					.fetch();
 
-			for (Record1 record : result) {
-				validExtensions.add(record.getValue(te.EXTENSION).toUpperCase());
-			}
+			validExtensions = result.stream()
+					.map(record -> record.getValue(te.EXTENSION).toUpperCase())
+					.collect(Collectors.toList());
 		}
 
 		@Override
 		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
-			if (attributes.isRegularFile()) {
-				System.out.println("Regular file: " + file.toString());
+			if (attributes.isRegularFile() && isRightMediaType(file)) {
+				try {
+					String hash = hash(file);
+					database.insertInto(RESOURCE, RESOURCE.CHECKSUM, RESOURCE.DIRECTORY, RESOURCE.NAME)
+							.values(hash, directory, file.toString().substring(directory.length()))
+							.onDuplicateKeyIgnore()
+							.execute();
 
-				if (isRightMediaType(file)) {
-					// insert into media database...
+					readMusicTag(file, hash);
+				} catch (CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException | NoSuchAlgorithmException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -81,9 +112,52 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 		private boolean isRightMediaType(final Path file) {
 			String filePath = file.toString();
-			String extension = filePath.substring(filePath.lastIndexOf("."));
+			String extension = filePath.substring(filePath.lastIndexOf(".") + 1);
 
 			return validExtensions.contains(extension.toUpperCase());
+		}
+
+		private String hash(final Path file) throws NoSuchAlgorithmException, IOException {
+			MessageDigest digest = MessageDigest.getInstance("SHA-1");
+			byte[] fileBytes = FileUtils.readFileToByteArray(file.toFile());
+			byte[] fileHash = digest.digest(fileBytes);
+			return Hex.encodeHexString(fileHash);
+		}
+
+		private void readMusicTag(final Path file, final String hash) throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
+			AudioFile audioFile = AudioFileIO.read(file.toFile());
+			Tag tag = audioFile.getTag();
+			if (tag != null) {
+				database.insertInto(MUSIC, MUSIC.RESOURCE, MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TITLE, MUSIC.GENRE, MUSIC.TRACK)
+						.values(hash,
+								getArtist(tag),
+								tag.getFirst(FieldKey.ALBUM),
+								tag.getFirst(FieldKey.TITLE),
+								tag.getFirst(FieldKey.GENRE),
+								getTrackNumber(tag))
+						.onDuplicateKeyIgnore()
+						.execute();
+			}
+		}
+
+		private String getArtist(final Tag tag) {
+			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.ARTIST))) {
+				return tag.getFirst(FieldKey.ARTIST);
+			} else if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST))) {
+				return tag.getFirst(FieldKey.ALBUM_ARTIST);
+			}
+
+			return "Unknown";
+		}
+
+		private Integer getTrackNumber(final Tag tag) {
+			String trackNumber = tag.getFirst(FieldKey.TRACK);
+
+			if (StringUtils.isNotEmpty(trackNumber)) {
+				return Integer.parseInt(trackNumber);
+			}
+
+			return null;
 		}
 
 		@Override

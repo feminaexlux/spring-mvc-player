@@ -63,7 +63,7 @@ public class Music extends TableImpl<MusicRecord> {
 	/**
 	 * The column <code>media.music.track</code>.
 	 */
-	public final TableField<MusicRecord, Integer> TRACK = createField("track", SQLDataType.INTEGER.nullable(false), this, "");
+	public final TableField<MusicRecord, Integer> TRACK = createField("track", SQLDataType.INTEGER, this, "");
 
 	/**
 	 * The column <code>media.music.title</code>.

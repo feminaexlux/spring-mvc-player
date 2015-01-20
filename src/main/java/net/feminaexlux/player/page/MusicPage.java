@@ -1,23 +1,23 @@
-package net.feminaexlux.player.view;
+package net.feminaexlux.player.page;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
-import static net.feminaexlux.player.view.HashCodePrimes.MUSIC;
+import static net.feminaexlux.player.page.HashCodePrimes.MUSIC;
 
-public class MusicView implements Serializable {
+public class MusicPage implements Serializable {
 
 	private final String resource;
 	private final String artist;
 	private final String album;
 	private final String title;
 	private final String genre;
-	private final int    trackNumber;
-	private final int    rating;
+	private final int trackNumber;
+	private final int rating;
 
-	private MusicView(final Builder builder) {
+	private MusicPage(final Builder builder) {
 		this.resource = builder.resource;
 		this.artist = builder.artist;
 		this.album = builder.album;
@@ -69,7 +69,7 @@ public class MusicView implements Serializable {
 			return false;
 		}
 
-		MusicView that = (MusicView) object;
+		MusicPage that = (MusicPage) object;
 		return new EqualsBuilder()
 				.append(this.artist, that.artist)
 				.append(this.album, that.album)
@@ -99,8 +99,8 @@ public class MusicView implements Serializable {
 		private String album;
 		private String title;
 		private String genre;
-		private int    trackNumber;
-		private int    rating;
+		private int trackNumber;
+		private int rating;
 
 		public Builder resource(String resource) {
 			this.resource = resource;
@@ -137,8 +137,8 @@ public class MusicView implements Serializable {
 			return this;
 		}
 
-		public MusicView build() {
-			return new MusicView(this);
+		public MusicPage build() {
+			return new MusicPage(this);
 		}
 	}
 

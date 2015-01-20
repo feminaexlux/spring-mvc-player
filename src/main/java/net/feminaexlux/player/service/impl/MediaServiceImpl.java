@@ -1,8 +1,5 @@
 package net.feminaexlux.player.service.impl;
 
-import net.feminaexlux.player.model.Tables;
-import net.feminaexlux.player.model.tables.Music;
-import net.feminaexlux.player.model.tables.Resource;
 import net.feminaexlux.player.service.MediaService;
 import net.feminaexlux.player.type.MediaType;
 import org.jooq.DSLContext;
@@ -11,11 +8,11 @@ import org.jooq.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static net.feminaexlux.player.model.Tables.MUSIC;
+import static net.feminaexlux.player.model.Tables.RESOURCE;
+
 @Service
 public class MediaServiceImpl implements MediaService {
-
-	public static final Music    MUSIC    = Tables.MUSIC.as("m");
-	public static final Resource RESOURCE = Tables.RESOURCE.as("r");
 
 	@Autowired
 	private DSLContext database;
@@ -36,6 +33,7 @@ public class MediaServiceImpl implements MediaService {
 	public Result<Record> recentlyPlayed(final MediaType type, int max) {
 		return database.select(MUSIC.fields()).from(RESOURCE)
 				.join(MUSIC).on(MUSIC.RESOURCE.eq(RESOURCE.CHECKSUM))
+				.where(RESOURCE.LASTACCESSED.isNotNull())
 				.orderBy(RESOURCE.LASTACCESSED.desc())
 				.limit(max)
 				.fetch();

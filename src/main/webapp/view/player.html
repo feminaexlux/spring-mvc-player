@@ -1,23 +1,27 @@
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<!DOCTYPE html>
 
 <html lang="en"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="layout.html">
+      layout:decorator="layout">
 <title>Media Player</title>
 
 <body>
 <h1>Media Player</h1>
 <section layout:fragment="content">
-    <ol th:each="file : ${music}">
-        <li th:text="${file.name}">Music name</li>
+    <ol th:each="music : ${recentlyPlayed}">
+        <li th:text="${music.title}">Music name</li>
     </ol>
 
     <hr>
-    <ol th:each="type : ${types}">
-        <li th:text="type.type">Type name</li>
-    </ol>
+
+    <form th:action="@{/scan}" method="post">
+        <fieldset>
+            <input type="text" name="directory" placeholder="Directory">
+            <input type="submit" value="Submit">
+        </fieldset>
+    </form>
 </section>
 <footer layout:fragment="footer">
     Testing

@@ -7,11 +7,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
-import org.thymeleaf.templateresolver.TemplateResolver;
 
 @ComponentScan
 @Configuration
@@ -19,16 +17,17 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 public class Application extends WebMvcConfigurerAdapter {
 
 	@Bean
-	public TemplateResolver templateResolver() {
+	public ServletContextTemplateResolver templateResolver() {
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
 		templateResolver.setPrefix("/view/");
 		templateResolver.setSuffix(".html");
-		templateResolver.setTemplateMode("HTML5");
+		templateResolver.setTemplateMode("LEGACYHTML5");
+		templateResolver.setCharacterEncoding("UTF-8");
 		return templateResolver;
 	}
 
 	@Bean
-	public TemplateEngine templateEngine(final ServletContextTemplateResolver templateResolver) {
+	public SpringTemplateEngine templateEngine(final ServletContextTemplateResolver templateResolver) {
 		SpringTemplateEngine templateEngine = new SpringTemplateEngine();
 		templateEngine.setTemplateResolver(templateResolver);
 		templateEngine.addDialect(new LayoutDialect());
