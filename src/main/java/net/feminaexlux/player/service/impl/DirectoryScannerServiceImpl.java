@@ -53,7 +53,8 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 	public void buildLibrary(final String directory, final MediaType type) throws IOException {
 		database.insertInto(DIRECTORY, DIRECTORY.LOCATION, DIRECTORY.TYPE, DIRECTORY.LASTSCANNED)
 				.values(directory, type.name(), new Timestamp(System.currentTimeMillis()))
-				.onDuplicateKeyIgnore()
+				.onDuplicateKeyUpdate()
+				.set(DIRECTORY.LASTSCANNED, new Timestamp(System.currentTimeMillis()))
 				.execute();
 
 		LibraryWalker walker = new LibraryWalker(directory, type);
@@ -128,14 +129,25 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			AudioFile audioFile = AudioFileIO.read(file.toFile());
 			Tag tag = audioFile.getTag();
 			if (tag != null) {
+				String artist = getArtist(tag);
+				String album = tag.getFirst(FieldKey.ALBUM);
+				String title = tag.getFirst(FieldKey.TITLE);
+				String genre = tag.getFirst(FieldKey.GENRE);
+				Integer trackNumber = getTrackNumber(tag);
+
 				database.insertInto(MUSIC, MUSIC.RESOURCE, MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TITLE, MUSIC.GENRE, MUSIC.TRACK)
 						.values(hash,
-								getArtist(tag),
-								tag.getFirst(FieldKey.ALBUM),
-								tag.getFirst(FieldKey.TITLE),
-								tag.getFirst(FieldKey.GENRE),
-								getTrackNumber(tag))
-						.onDuplicateKeyIgnore()
+								artist,
+								album,
+								title,
+								genre,
+								trackNumber)
+						.onDuplicateKeyUpdate()
+						.set(MUSIC.ARTIST, artist)
+						.set(MUSIC.ALBUM, album)
+						.set(MUSIC.TITLE, title)
+						.set(MUSIC.GENRE, genre)
+						.set(MUSIC.TRACK, trackNumber)
 						.execute();
 			}
 		}
