@@ -2,7 +2,7 @@ package net.feminaexlux.player.service.impl;
 
 import net.feminaexlux.player.model.tables.Directory;
 import net.feminaexlux.player.model.tables.TypeExtension;
-import net.feminaexlux.player.service.DirectoryScanner;
+import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.type.MediaType;
 import org.jooq.DSLContext;
 import org.jooq.Record1;
@@ -25,9 +25,9 @@ import java.util.List;
 import static net.feminaexlux.player.model.Tables.TYPE_EXTENSION;
 
 @Service
-public class DirectoryScannerImpl implements DirectoryScanner {
+public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DirectoryScanner.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DirectoryScannerService.class);
 
 	@Autowired
 	protected DSLContext database;
