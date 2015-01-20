@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html lang="en"
+	  xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="layout">
+<title>Media Results</title>
+
+<body>
+<h1>Media Results</h1>
+<section th:fragment="table(displayResults, caption)" th:remove="tag">
+	<table>
+		<caption th:text="${caption}">Results</caption>
+		<thead>
+		<tr>
+			<th>Artist</th>
+			<th>Album</th>
+			<th>Title</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr th:each="music : ${displayResults}">
+			<td>
+				<a href="javascript:" th:href="@{/artists/{artist}(artist=${music.artist})}" th:text="${music.artist}">
+					Artist
+				</a>
+			</td>
+			<td>
+				<a href="javascript:" th:href="@{/albums/{album}(album=${music.album})}" th:text="${music.album}">
+					Album
+				</a>
+			</td>
+			<td th:text="${music.title}">Title</td>
+		</tr>
+		</tbody>
+	</table>
+</section>
+
+<section th:fragment="list(displayResults, title)" th:remove="tag">
+	<h2 th:text="${title}">List</h2>
+	<ol>
+		<li th:each="result : ${displayResults}">
+			<a href="javascript:" th:href="@{/{type}/{name}(type=${title.toLowerCase()},name=${result})}" th:text="${result}">
+				Result
+			</a>
+		</li>
+	</ol>
+</section>
+</body>
+</html>
