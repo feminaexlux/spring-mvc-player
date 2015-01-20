@@ -51,19 +51,15 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 	@Override
 	public void buildLibrary(final String directory, final MediaType type) throws IOException {
+		Timestamp now = new Timestamp(System.currentTimeMillis());
 		database.insertInto(DIRECTORY, DIRECTORY.LOCATION, DIRECTORY.TYPE, DIRECTORY.LASTSCANNED)
-				.values(directory, type.name(), new Timestamp(System.currentTimeMillis()))
+				.values(directory, type.name(), now)
 				.onDuplicateKeyUpdate()
-				.set(DIRECTORY.LASTSCANNED, new Timestamp(System.currentTimeMillis()))
+				.set(DIRECTORY.LASTSCANNED, now)
 				.execute();
 
 		LibraryWalker walker = new LibraryWalker(directory, type);
 		Files.walkFileTree(Paths.get(directory), walker);
-	}
-
-	@Override
-	public void updateLibrary(final String directory, final MediaType type) {
-
 	}
 
 	@Override
@@ -136,12 +132,7 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				Integer trackNumber = getTrackNumber(tag);
 
 				database.insertInto(MUSIC, MUSIC.RESOURCE, MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TITLE, MUSIC.GENRE, MUSIC.TRACK)
-						.values(hash,
-								artist,
-								album,
-								title,
-								genre,
-								trackNumber)
+						.values(hash, artist, album, title, genre, trackNumber)
 						.onDuplicateKeyUpdate()
 						.set(MUSIC.ARTIST, artist)
 						.set(MUSIC.ALBUM, album)

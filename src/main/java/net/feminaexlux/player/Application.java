@@ -19,10 +19,11 @@ public class Application extends WebMvcConfigurerAdapter {
 	@Bean
 	public ServletContextTemplateResolver templateResolver() {
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver();
-		templateResolver.setPrefix("/view/");
+		templateResolver.setPrefix("/META-INF/view/");
 		templateResolver.setSuffix(".html");
 		templateResolver.setTemplateMode("LEGACYHTML5");
 		templateResolver.setCharacterEncoding("UTF-8");
+		templateResolver.setCacheable(false);
 		return templateResolver;
 	}
 

@@ -8,8 +8,6 @@ public interface DirectoryScannerService {
 
 	void buildLibrary(final String directory, final MediaType type) throws IOException;
 
-	void updateLibrary(final String directory, final MediaType type);
-
 	void clearLibrary(final String directory, final MediaType type);
 
 }

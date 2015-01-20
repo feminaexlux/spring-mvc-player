@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout">
+<title>Media Player</title>
+
+<body>
+<h1>Media Player</h1>
+<section layout:fragment="content">
+    <div th:unless="${#lists.isEmpty(recentlyPlayed)}" th:remove="tag">
+        <div th:replace="fragment/common :: table(${recentlyPlayed}, 'Recently Played')"></div>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(searchResults)}" th:remove="tag">
+        <table th:replace="fragment/common :: table(${searchResults}, 'Search Results')">
+            <caption>Search results</caption>
+            <thead>
+            <tr>
+                <th>Artist</th>
+                <th>Album</th>
+                <th>Title</th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+
+    <hr>
+
+    <div class="error-message" th:unless="${errorMessage == null}" th:text="${errorMessage}"></div>
+
+    <form th:action="@{/scan}" method="post">
+        <fieldset>
+            <input type="text" name="directory" placeholder="Directory">
+            <input type="submit" value="Add/Update Directory">
+        </fieldset>
+    </form>
+
+    <form th:action="@{/search}" method="post">
+        <fieldset>
+            <input type="text" name="query" placeholder="Search...">
+            <input type="submit" value="Search">
+        </fieldset>
+    </form>
+
+    <hr>
+
+    <a href="/artists">Artists</a>
+    <a href="/albums">Albums</a>
+    <a href="/viewStatusMessages">View Logs</a>
+</section>
+</body>
+</html>

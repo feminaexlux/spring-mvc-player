@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+<html lang="en"
+	  xmlns="http://www.w3.org/1999/xhtml"
+	  xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorator="layout">
+<title>Results</title>
+
+<body>
+<h1 th:text="${title}">Results</h1>
+<section layout:fragment="content">
+	<ol th:replace="fragment/common :: list(${items}, ${title})">
+		<li>Result</li>
+	</ol>
+</section>
+</body>
+</html>

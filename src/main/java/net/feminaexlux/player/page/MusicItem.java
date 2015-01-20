@@ -7,17 +7,17 @@ import java.io.Serializable;
 
 import static net.feminaexlux.player.page.HashCodePrimes.MUSIC;
 
-public class MusicPage implements Serializable {
+public class MusicItem implements Serializable {
 
-	private final String resource;
-	private final String artist;
-	private final String album;
-	private final String title;
-	private final String genre;
-	private final int trackNumber;
-	private final int rating;
+	private final String  resource;
+	private final String  artist;
+	private final String  album;
+	private final String  title;
+	private final String  genre;
+	private final Integer trackNumber;
+	private final int     rating;
 
-	private MusicPage(final Builder builder) {
+	private MusicItem(final Builder builder) {
 		this.resource = builder.resource;
 		this.artist = builder.artist;
 		this.album = builder.album;
@@ -47,7 +47,7 @@ public class MusicPage implements Serializable {
 		return genre;
 	}
 
-	public int getTrackNumber() {
+	public Integer getTrackNumber() {
 		return trackNumber;
 	}
 
@@ -69,7 +69,7 @@ public class MusicPage implements Serializable {
 			return false;
 		}
 
-		MusicPage that = (MusicPage) object;
+		MusicItem that = (MusicItem) object;
 		return new EqualsBuilder()
 				.append(this.artist, that.artist)
 				.append(this.album, that.album)
@@ -94,13 +94,13 @@ public class MusicPage implements Serializable {
 
 	public static class Builder {
 
-		private String resource;
-		private String artist;
-		private String album;
-		private String title;
-		private String genre;
-		private int trackNumber;
-		private int rating;
+		private String  resource;
+		private String  artist;
+		private String  album;
+		private String  title;
+		private String  genre;
+		private Integer trackNumber;
+		private int     rating;
 
 		public Builder resource(String resource) {
 			this.resource = resource;
@@ -127,7 +127,7 @@ public class MusicPage implements Serializable {
 			return this;
 		}
 
-		public Builder trackNumber(int trackNumber) {
+		public Builder trackNumber(Integer trackNumber) {
 			this.trackNumber = trackNumber;
 			return this;
 		}
@@ -137,8 +137,8 @@ public class MusicPage implements Serializable {
 			return this;
 		}
 
-		public MusicPage build() {
-			return new MusicPage(this);
+		public MusicItem build() {
+			return new MusicItem(this);
 		}
 	}
 

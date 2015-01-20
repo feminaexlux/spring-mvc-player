@@ -2,10 +2,10 @@ package net.feminaexlux.player.config;
 
 import com.mysql.jdbc.Driver;
 import net.feminaexlux.player.service.DirectoryScannerService;
-import net.feminaexlux.player.service.MediaService;
+import net.feminaexlux.player.service.MusicService;
 import net.feminaexlux.player.service.ViewService;
 import net.feminaexlux.player.service.impl.DirectoryScannerServiceImpl;
-import net.feminaexlux.player.service.impl.MediaServiceImpl;
+import net.feminaexlux.player.service.impl.MusicServiceImpl;
 import net.feminaexlux.player.service.impl.ViewServiceImpl;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
@@ -37,8 +37,8 @@ public class PlayerConfig {
 	}
 
 	@Bean
-	public MediaService mediaService() {
-		return new MediaServiceImpl();
+	public MusicService musicService() {
+		return new MusicServiceImpl();
 	}
 
 	@Bean
