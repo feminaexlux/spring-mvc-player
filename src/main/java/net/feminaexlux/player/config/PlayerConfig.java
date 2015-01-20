@@ -12,12 +12,15 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Configuration
+@EnableScheduling
 public class PlayerConfig {
 
 	private static String SQL_URL      = System.getProperty("player.sql.url", "jdbc:mysql://localhost:3306/media");
@@ -44,6 +47,11 @@ public class PlayerConfig {
 	@Bean
 	public ViewService viewService() {
 		return new ViewServiceImpl();
+	}
+
+	@Scheduled(fixedDelay = 60 * 1000)
+	public void keepAlive() throws SQLException {
+		database().query("select 1").execute();
 	}
 
 }
