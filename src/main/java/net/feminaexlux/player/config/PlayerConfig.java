@@ -49,7 +49,7 @@ public class PlayerConfig {
 		return new ViewServiceImpl();
 	}
 
-	@Scheduled(fixedDelay = 60 * 1000)
+	@Scheduled(initialDelay = 60 * 1000, fixedDelay = 60 * 1000)
 	public void keepAlive() throws SQLException {
 		database().query("select 1").execute();
 	}
