@@ -7,6 +7,8 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
@@ -15,6 +17,9 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
 		super.onStartup(servletContext);
+
+		Logger.getLogger("org.jaudiotagger").setLevel(Level.SEVERE);
+		Logger.getLogger("org.jooq").setLevel(Level.SEVERE);
 
 		if (DEBUG) {
 			ServletRegistration.Dynamic viewStatusMessages =
@@ -31,7 +36,7 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[] {
+		return new Class<?>[]{
 				Application.class
 				, PlayerConfig.class
 		};
@@ -39,7 +44,7 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] {
+		return new String[]{
 				"/"
 		};
 	}

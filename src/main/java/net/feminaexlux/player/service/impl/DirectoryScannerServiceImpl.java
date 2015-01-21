@@ -31,6 +31,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +46,13 @@ import static net.feminaexlux.player.model.Tables.TYPE_EXTENSION;
 public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DirectoryScannerService.class);
+	private static final int BATCH_AMOUNT = Integer.parseInt(System.getProperty("player.sql.batch", "500"));
 
 	@Autowired
 	protected DSLContext database;
 
-	private Map<String, MusicRecord> pathToMusicRecord = new HashMap<>();
-	private Map<String, MusicRecord> checksumToMusicRecord = Collections.emptyMap();
-	private Map<String, ResourceRecord> checksumToResourceRecord = Collections.emptyMap();
+	private List<MusicRecord> modifiedMusic = new ArrayList<>();
+	private List<ResourceRecord> modifiedRecords = new ArrayList<>();
 
 	@Override
 	public void buildLibrary(final String directory, final MediaType type) throws IOException {
@@ -62,23 +63,11 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				.set(DIRECTORY.LASTSCANNED, now)
 				.execute();
 
-		initializeMaps();
-
 		LibraryWalker walker = new LibraryWalker(directory, type);
 		Files.walkFileTree(Paths.get(directory), walker);
 
-		database.batchStore(checksumToResourceRecord.values());
-		database.batchStore(checksumToMusicRecord.values());
-	}
-
-	private void initializeMaps() {
-		checksumToMusicRecord = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE);
-		checksumToResourceRecord = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM);
-		for (MusicRecord musicRecord : checksumToMusicRecord.values()) {
-			ResourceRecord resourceRecord = checksumToResourceRecord.get(musicRecord.getResource());
-			String filePath = resourceRecord.getDirectory() + resourceRecord.getName();
-			pathToMusicRecord.put(filePath, musicRecord);
-		}
+		database.batchStore(modifiedRecords).execute();
+		database.batchStore(modifiedMusic).execute();
 	}
 
 	@Override
@@ -89,18 +78,16 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				.where(RESOURCE.DIRECTORY.equal(directory))
 				.fetchInto(MusicRecord.class);
 		database.batchDelete(affectedMusic);
-
-		List<ResourceRecord> affectedResources = database
-				.select(RESOURCE.fields()).from(RESOURCE)
-				.where(RESOURCE.DIRECTORY.equal(directory))
-				.fetchInto(ResourceRecord.class);
-		database.batchDelete(affectedResources);
 	}
 
 	protected class LibraryWalker extends SimpleFileVisitor<Path> {
 
 		private String directory;
 		private List<String> validExtensions = Collections.emptyList();
+
+		private Map<String, MusicRecord> pathToMusicRecord = new HashMap<>();
+		private Map<String, MusicRecord> checksumToMusicRecord = Collections.emptyMap();
+		private Map<String, ResourceRecord> checksumToResourceRecord = Collections.emptyMap();
 
 		protected LibraryWalker(final String directory, final MediaType mediaType) {
 			super();
@@ -112,6 +99,18 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 					.where(TYPE_EXTENSION.TYPE.equal(mediaType.name()))
 					.fetch()
 					.into(String.class);
+
+			initializeMaps();
+		}
+
+		private void initializeMaps() {
+			checksumToMusicRecord = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE);
+			checksumToResourceRecord = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM);
+			for (MusicRecord musicRecord : checksumToMusicRecord.values()) {
+				ResourceRecord resourceRecord = checksumToResourceRecord.get(musicRecord.getResource());
+				String filePath = resourceRecord.getDirectory() + resourceRecord.getName();
+				pathToMusicRecord.put(filePath, musicRecord);
+			}
 		}
 
 		@Override
@@ -156,6 +155,12 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			resourceRecord.setChecksum(hash);
 			resourceRecord.setDirectory(directory);
 			resourceRecord.setName(file.toString().substring(directory.length()));
+
+			modifiedRecords.add(resourceRecord);
+			if (modifiedRecords.size() == BATCH_AMOUNT) {
+				database.batchStore(modifiedRecords).execute();
+				modifiedRecords.clear();
+			}
 		}
 
 		private void updateMusicProperties(final Path file, final String hash) throws CannotReadException, IOException, TagException, ReadOnlyFileException, InvalidAudioFrameException {
@@ -180,6 +185,12 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				musicRecord.setTrack(trackNumber);
 				musicRecord.setTitle(title);
 				musicRecord.setGenre(genre);
+
+				modifiedMusic.add(musicRecord);
+				if (modifiedMusic.size() == BATCH_AMOUNT) {
+					database.batchStore(modifiedMusic).execute();
+					modifiedMusic.clear();
+				}
 			}
 		}
 
