@@ -2,8 +2,6 @@ package net.feminaexlux.player.controller;
 
 import net.feminaexlux.player.model.tables.records.MusicRecord;
 import net.feminaexlux.player.service.DirectoryScannerService;
-import net.feminaexlux.player.service.MusicService;
-import net.feminaexlux.player.service.ViewService;
 import net.feminaexlux.player.type.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -20,16 +18,12 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-public class PlayerController {
+public class PlayerController extends AbstractController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlayerController.class);
 
 	@Autowired
 	private DirectoryScannerService directoryScannerService;
-	@Autowired
-	private MusicService musicService;
-	@Autowired
-	private ViewService viewService;
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String index(final Model model) {

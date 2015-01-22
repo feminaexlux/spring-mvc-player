@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-	public static Boolean DEBUG = Boolean.parseBoolean(System.getProperty("player.log.debug", "false"));
+	public static final Boolean DEBUG = Boolean.parseBoolean(System.getProperty("player.log.debug", "false"));
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
@@ -36,7 +36,7 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[]{
+		return new Class<?>[] {
 				Application.class
 				, PlayerConfig.class
 		};
@@ -44,7 +44,7 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[]{
+		return new String[] {
 				"/"
 		};
 	}
