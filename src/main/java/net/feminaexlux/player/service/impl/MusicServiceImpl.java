@@ -3,12 +3,11 @@ package net.feminaexlux.player.service.impl;
 import net.feminaexlux.player.model.tables.records.MusicRecord;
 import net.feminaexlux.player.service.MusicService;
 import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Result;
 import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 import static net.feminaexlux.player.model.Tables.MUSIC;
 import static net.feminaexlux.player.model.Tables.RESOURCE;
@@ -20,7 +19,7 @@ public class MusicServiceImpl implements MusicService {
 	private DSLContext database;
 
 	@Override
-	public Result<Record> search(final String query) {
+	public List<MusicRecord> search(final String query) {
 		return database.select(MUSIC.fields()).from(RESOURCE)
 				.join(MUSIC).on(MUSIC.RESOURCE.eq(RESOURCE.CHECKSUM))
 				.where(RESOURCE.NAME.contains(query))
@@ -28,50 +27,50 @@ public class MusicServiceImpl implements MusicService {
 				.or(MUSIC.ARTIST.contains(query))
 				.or(MUSIC.ALBUM.contains(query))
 				.orderBy(MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TITLE)
-				.fetch();
+				.fetchInto(MusicRecord.class);
 	}
 
 	@Override
-	public Result<Record> recentlyPlayed(final int max) {
+	public List<MusicRecord> recentlyPlayed(final int max) {
 		return database.select(MUSIC.fields()).from(RESOURCE)
 				.join(MUSIC).on(MUSIC.RESOURCE.eq(RESOURCE.CHECKSUM))
 				.where(RESOURCE.LASTACCESSED.isNotNull())
 				.orderBy(RESOURCE.LASTACCESSED.desc())
 				.limit(max)
-				.fetch();
+				.fetchInto(MusicRecord.class);
 	}
 
 	@Override
-	public Result<Record1<String>> findAllArtists() {
+	public List<String> findAllArtists() {
 		return findAllBy(MUSIC.ARTIST);
 	}
 
 	@Override
-	public Result<Record> findByArtist(final String artist) {
+	public List<MusicRecord> findByArtist(final String artist) {
 		return findBy(MUSIC.ARTIST, artist);
 	}
 
 	@Override
-	public Result<Record1<String>> findAllAlbums() {
+	public List<String> findAllAlbums() {
 		return findAllBy(MUSIC.ALBUM);
 	}
 
 	@Override
-	public Result<Record> findByAlbum(final String album) {
+	public List<MusicRecord> findByAlbum(final String album) {
 		return findBy(MUSIC.ALBUM, album);
 	}
 
-	private Result<Record1<String>> findAllBy(final TableField<MusicRecord, String> field) {
+	private List<String> findAllBy(final TableField<MusicRecord, String> field) {
 		return database.selectDistinct(field)
 				.from(MUSIC)
 				.orderBy(field)
-				.fetch();
+				.fetchInto(String.class);
 	}
 
-	private Result<Record> findBy(final TableField<MusicRecord, String> field, final String term) {
+	private List<MusicRecord> findBy(final TableField<MusicRecord, String> field, final String term) {
 		return database.select(MUSIC.fields()).from(MUSIC)
 				.where(field.equal(term))
 				.orderBy(MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TRACK)
-				.fetch();
+				.fetchInto(MusicRecord.class);
 	}
 }

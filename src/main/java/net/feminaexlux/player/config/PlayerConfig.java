@@ -12,6 +12,7 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -20,10 +21,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Configuration
+@EnableAsync
 @EnableScheduling
 public class PlayerConfig {
 
-	private static String SQL_URL      = System.getProperty("player.sql.url", "jdbc:mysql://localhost:3306/media");
+	private static String SQL_URL = System.getProperty("player.sql.url", "jdbc:mysql://localhost:3306/media");
 	private static String SQL_USERNAME = System.getProperty("player.sql.username", "media");
 	private static String SQL_PASSWORD = System.getProperty("player.sql.password", "media");
 

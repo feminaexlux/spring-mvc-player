@@ -1,21 +1,21 @@
 package net.feminaexlux.player.service;
 
-import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Result;
+import net.feminaexlux.player.model.tables.records.MusicRecord;
+
+import java.util.List;
 
 public interface MusicService {
 
-	Result<Record> search(final String query);
+	List<MusicRecord> search(final String query);
 
-	Result<Record> recentlyPlayed(final int max);
+	List<MusicRecord> recentlyPlayed(final int max);
 
-	Result<Record1<String>> findAllArtists();
+	List<String> findAllArtists();
 
-	Result<Record> findByArtist(final String artist);
+	List<MusicRecord> findByArtist(final String artist);
 
-	Result<Record1<String>> findAllAlbums();
+	List<String> findAllAlbums();
 
-	Result<Record> findByAlbum(final String album);
+	List<MusicRecord> findByAlbum(final String album);
 
 }

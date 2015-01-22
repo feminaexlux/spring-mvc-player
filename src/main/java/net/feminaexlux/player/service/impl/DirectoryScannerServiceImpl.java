@@ -19,6 +19,7 @@ import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -52,8 +53,9 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 	protected DSLContext database;
 
 	private List<MusicRecord> modifiedMusic = new ArrayList<>();
-	private List<ResourceRecord> modifiedRecords = new ArrayList<>();
+	private List<ResourceRecord> modifiedResources = new ArrayList<>();
 
+	@Async
 	@Override
 	public void buildLibrary(final String directory, final MediaType type) throws IOException {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -66,7 +68,7 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 		LibraryWalker walker = new LibraryWalker(directory, type);
 		Files.walkFileTree(Paths.get(directory), walker);
 
-		database.batchStore(modifiedRecords).execute();
+		database.batchStore(modifiedResources).execute();
 		database.batchStore(modifiedMusic).execute();
 	}
 
@@ -82,12 +84,14 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 	protected class LibraryWalker extends SimpleFileVisitor<Path> {
 
+		private static final String UNKNOWN = "(Unknown)";
+
 		private String directory;
 		private List<String> validExtensions = Collections.emptyList();
 
 		private Map<String, MusicRecord> pathToMusicRecord = new HashMap<>();
-		private Map<String, MusicRecord> checksumToMusicRecord = Collections.emptyMap();
-		private Map<String, ResourceRecord> checksumToResourceRecord = Collections.emptyMap();
+		private Map<String, MusicRecord> checksumToMusic = Collections.emptyMap();
+		private Map<String, ResourceRecord> checksumToResource = Collections.emptyMap();
 
 		protected LibraryWalker(final String directory, final MediaType mediaType) {
 			super();
@@ -97,17 +101,16 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			validExtensions = database.select(TYPE_EXTENSION.EXTENSION.upper())
 					.from(TYPE_EXTENSION)
 					.where(TYPE_EXTENSION.TYPE.equal(mediaType.name()))
-					.fetch()
-					.into(String.class);
+					.fetchInto(String.class);
 
 			initializeMaps();
 		}
 
 		private void initializeMaps() {
-			checksumToMusicRecord = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE);
-			checksumToResourceRecord = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM);
-			for (MusicRecord musicRecord : checksumToMusicRecord.values()) {
-				ResourceRecord resourceRecord = checksumToResourceRecord.get(musicRecord.getResource());
+			checksumToMusic = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE);
+			checksumToResource = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM);
+			for (MusicRecord musicRecord : checksumToMusic.values()) {
+				ResourceRecord resourceRecord = checksumToResource.get(musicRecord.getResource());
 				String filePath = resourceRecord.getDirectory() + resourceRecord.getName();
 				pathToMusicRecord.put(filePath, musicRecord);
 			}
@@ -146,20 +149,29 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			return Hex.encodeHexString(fileHash);
 		}
 
-		private void updateResourceProperties(Path file, String hash) {
-			ResourceRecord resourceRecord = checksumToResourceRecord.get(hash);
-			if (resourceRecord == null) {
-				resourceRecord = new ResourceRecord();
-				checksumToResourceRecord.put(hash, resourceRecord);
-			}
+		private void updateResourceProperties(final Path file, final String hash) {
+			ResourceRecord resourceRecord = getNewOrExistingResource(hash);
 			resourceRecord.setChecksum(hash);
 			resourceRecord.setDirectory(directory);
 			resourceRecord.setName(file.toString().substring(directory.length()));
+			modifiedResources.add(resourceRecord);
+			flushResourceRecordBatch();
+		}
 
-			modifiedRecords.add(resourceRecord);
-			if (modifiedRecords.size() == BATCH_AMOUNT) {
-				database.batchStore(modifiedRecords).execute();
-				modifiedRecords.clear();
+		private ResourceRecord getNewOrExistingResource(final String hash) {
+			ResourceRecord resourceRecord = checksumToResource.get(hash);
+			if (resourceRecord == null) {
+				resourceRecord = new ResourceRecord();
+				checksumToResource.put(hash, resourceRecord);
+			}
+
+			return resourceRecord;
+		}
+
+		private void flushResourceRecordBatch() {
+			if (modifiedResources.size() == BATCH_AMOUNT) {
+				database.batchStore(modifiedResources).execute();
+				modifiedResources.clear();
 			}
 		}
 
@@ -168,18 +180,12 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			Tag tag = audioFile.getTag();
 			if (tag != null) {
 				String artist = getArtist(tag);
-				String album = tag.getFirst(FieldKey.ALBUM);
+				String album = getAlbum(tag);
 				Integer trackNumber = getTrackNumber(tag);
-				String title = tag.getFirst(FieldKey.TITLE);
+				String title = getTitle(tag, hash);
 				String genre = tag.getFirst(FieldKey.GENRE);
 
-				MusicRecord musicRecord = checksumToMusicRecord.get(hash);
-				if (musicRecord == null) {
-					musicRecord = new MusicRecord();
-					musicRecord.setResource(hash);
-					checksumToMusicRecord.put(hash, musicRecord);
-				}
-
+				MusicRecord musicRecord = getNewOrExistingMusic(hash);
 				musicRecord.setArtist(artist);
 				musicRecord.setAlbum(album);
 				musicRecord.setTrack(trackNumber);
@@ -187,11 +193,19 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				musicRecord.setGenre(genre);
 
 				modifiedMusic.add(musicRecord);
-				if (modifiedMusic.size() == BATCH_AMOUNT) {
-					database.batchStore(modifiedMusic).execute();
-					modifiedMusic.clear();
-				}
+				flushMusicRecordBatch();
 			}
+		}
+
+		private MusicRecord getNewOrExistingMusic(final String hash) {
+			MusicRecord musicRecord = checksumToMusic.get(hash);
+			if (musicRecord == null) {
+				musicRecord = new MusicRecord();
+				musicRecord.setResource(hash);
+				checksumToMusic.put(hash, musicRecord);
+			}
+
+			return musicRecord;
 		}
 
 		private String getArtist(final Tag tag) {
@@ -201,7 +215,27 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				return tag.getFirst(FieldKey.ALBUM_ARTIST);
 			}
 
-			return "Unknown";
+			return UNKNOWN;
+		}
+
+		private String getAlbum(Tag tag) {
+			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.ALBUM))) {
+				return tag.getFirst(FieldKey.ALBUM);
+			}
+
+			return UNKNOWN;
+		}
+
+		private String getTitle(Tag tag, String hash) {
+			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.TITLE))) {
+				return tag.getFirst(FieldKey.TITLE);
+			}
+
+			if (checksumToResource.containsKey(hash)) {
+				return checksumToResource.get(hash).getName();
+			}
+
+			return UNKNOWN;
 		}
 
 		private Integer getTrackNumber(final Tag tag) {
@@ -211,6 +245,13 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			}
 
 			return null;
+		}
+
+		private void flushMusicRecordBatch() {
+			if (modifiedMusic.size() == BATCH_AMOUNT) {
+				database.batchStore(modifiedMusic).execute();
+				modifiedMusic.clear();
+			}
 		}
 
 		@Override
