@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.tables.Directory;
 import net.feminaexlux.player.model.tables.Mood;
 import net.feminaexlux.player.model.tables.MoodResource;
 import net.feminaexlux.player.model.tables.Music;
+import net.feminaexlux.player.model.tables.NormalizedText;
 import net.feminaexlux.player.model.tables.Playlist;
 import net.feminaexlux.player.model.tables.PlaylistEntry;
 import net.feminaexlux.player.model.tables.Resource;
@@ -32,7 +33,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Media extends SchemaImpl {
 
-	private static final long serialVersionUID = -1998415585;
+	private static final long serialVersionUID = 787093819;
 
 	/**
 	 * The reference instance of <code>media</code>
@@ -59,6 +60,7 @@ public class Media extends SchemaImpl {
 				Mood.MOOD,
 				MoodResource.MOOD_RESOURCE,
 				Music.MUSIC,
+				NormalizedText.NORMALIZED_TEXT,
 				Playlist.PLAYLIST,
 				PlaylistEntry.PLAYLIST_ENTRY,
 				Resource.RESOURCE,

@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.Keys;
 import net.feminaexlux.player.model.Media;
 import net.feminaexlux.player.model.tables.records.MoodResourceRecord;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -97,8 +98,8 @@ public class MoodResource extends TableImpl<MoodResourceRecord> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<org.jooq.ForeignKey<MoodResourceRecord, ?>> getReferences() {
-		return Arrays.<org.jooq.ForeignKey<MoodResourceRecord, ?>>asList(Keys.FK1_MOOD_RESOURCE_MOOD, Keys.FK2_MOOD_RESOURCE_RESOURCE);
+	public List<ForeignKey<MoodResourceRecord, ?>> getReferences() {
+		return Arrays.<ForeignKey<MoodResourceRecord, ?>>asList(Keys.FK1_MOOD_RESOURCE_MOOD, Keys.FK2_MOOD_RESOURCE_RESOURCE);
 	}
 
 	/**

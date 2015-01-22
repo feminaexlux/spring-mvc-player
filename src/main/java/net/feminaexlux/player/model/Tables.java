@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.tables.Directory;
 import net.feminaexlux.player.model.tables.Mood;
 import net.feminaexlux.player.model.tables.MoodResource;
 import net.feminaexlux.player.model.tables.Music;
+import net.feminaexlux.player.model.tables.NormalizedText;
 import net.feminaexlux.player.model.tables.Playlist;
 import net.feminaexlux.player.model.tables.PlaylistEntry;
 import net.feminaexlux.player.model.tables.Resource;
@@ -47,6 +48,11 @@ public class Tables {
 	 * The table media.music
 	 */
 	public static final Music MUSIC = Music.MUSIC;
+
+	/**
+	 * The table media.normalized_text
+	 */
+	public static final NormalizedText NORMALIZED_TEXT = NormalizedText.NORMALIZED_TEXT;
 
 	/**
 	 * The table media.playlist

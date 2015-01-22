@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.tables.Directory;
 import net.feminaexlux.player.model.tables.Mood;
 import net.feminaexlux.player.model.tables.MoodResource;
 import net.feminaexlux.player.model.tables.Music;
+import net.feminaexlux.player.model.tables.NormalizedText;
 import net.feminaexlux.player.model.tables.Playlist;
 import net.feminaexlux.player.model.tables.PlaylistEntry;
 import net.feminaexlux.player.model.tables.Resource;
@@ -16,6 +17,7 @@ import net.feminaexlux.player.model.tables.records.DirectoryRecord;
 import net.feminaexlux.player.model.tables.records.MoodRecord;
 import net.feminaexlux.player.model.tables.records.MoodResourceRecord;
 import net.feminaexlux.player.model.tables.records.MusicRecord;
+import net.feminaexlux.player.model.tables.records.NormalizedTextRecord;
 import net.feminaexlux.player.model.tables.records.PlaylistEntryRecord;
 import net.feminaexlux.player.model.tables.records.PlaylistRecord;
 import net.feminaexlux.player.model.tables.records.ResourceRecord;
@@ -53,8 +55,9 @@ public class Keys {
 	public static final UniqueKey<MoodRecord> KEY_MOOD_PRIMARY = UniqueKeys0.KEY_MOOD_PRIMARY;
 	public static final UniqueKey<MoodResourceRecord> KEY_MOOD_RESOURCE_PRIMARY = UniqueKeys0.KEY_MOOD_RESOURCE_PRIMARY;
 	public static final UniqueKey<MusicRecord> KEY_MUSIC_PRIMARY = UniqueKeys0.KEY_MUSIC_PRIMARY;
+	public static final UniqueKey<NormalizedTextRecord> KEY_NORMALIZED_TEXT_PRIMARY = UniqueKeys0.KEY_NORMALIZED_TEXT_PRIMARY;
 	public static final UniqueKey<PlaylistRecord> KEY_PLAYLIST_PRIMARY = UniqueKeys0.KEY_PLAYLIST_PRIMARY;
-	public static final UniqueKey<PlaylistEntryRecord> KEY_PLAYLIST_ENTRY_PLAYLIST_ORDER = UniqueKeys0.KEY_PLAYLIST_ENTRY_PLAYLIST_ORDER;
+	public static final UniqueKey<PlaylistEntryRecord> KEY_PLAYLIST_ENTRY_PRIMARY = UniqueKeys0.KEY_PLAYLIST_ENTRY_PRIMARY;
 	public static final UniqueKey<ResourceRecord> KEY_RESOURCE_PRIMARY = UniqueKeys0.KEY_RESOURCE_PRIMARY;
 	public static final UniqueKey<TypeRecord> KEY_TYPE_PRIMARY = UniqueKeys0.KEY_TYPE_PRIMARY;
 	public static final UniqueKey<TypeExtensionRecord> KEY_TYPE_EXTENSION_PRIMARY = UniqueKeys0.KEY_TYPE_EXTENSION_PRIMARY;
@@ -81,8 +84,9 @@ public class Keys {
 		public static final UniqueKey<MoodRecord> KEY_MOOD_PRIMARY = createUniqueKey(Mood.MOOD, Mood.MOOD.NAME);
 		public static final UniqueKey<MoodResourceRecord> KEY_MOOD_RESOURCE_PRIMARY = createUniqueKey(MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.MOOD, MoodResource.MOOD_RESOURCE.RESOURCE);
 		public static final UniqueKey<MusicRecord> KEY_MUSIC_PRIMARY = createUniqueKey(Music.MUSIC, Music.MUSIC.RESOURCE);
+		public static final UniqueKey<NormalizedTextRecord> KEY_NORMALIZED_TEXT_PRIMARY = createUniqueKey(NormalizedText.NORMALIZED_TEXT, NormalizedText.NORMALIZED_TEXT.ORIGINAL);
 		public static final UniqueKey<PlaylistRecord> KEY_PLAYLIST_PRIMARY = createUniqueKey(Playlist.PLAYLIST, Playlist.PLAYLIST.NAME);
-		public static final UniqueKey<PlaylistEntryRecord> KEY_PLAYLIST_ENTRY_PLAYLIST_ORDER = createUniqueKey(PlaylistEntry.PLAYLIST_ENTRY, PlaylistEntry.PLAYLIST_ENTRY.PLAYLIST, PlaylistEntry.PLAYLIST_ENTRY.ORDER);
+		public static final UniqueKey<PlaylistEntryRecord> KEY_PLAYLIST_ENTRY_PRIMARY = createUniqueKey(PlaylistEntry.PLAYLIST_ENTRY, PlaylistEntry.PLAYLIST_ENTRY.PLAYLIST, PlaylistEntry.PLAYLIST_ENTRY.ORDER);
 		public static final UniqueKey<ResourceRecord> KEY_RESOURCE_PRIMARY = createUniqueKey(Resource.RESOURCE, Resource.RESOURCE.CHECKSUM);
 		public static final UniqueKey<TypeRecord> KEY_TYPE_PRIMARY = createUniqueKey(Type.TYPE, Type.TYPE.TYPE_);
 		public static final UniqueKey<TypeExtensionRecord> KEY_TYPE_EXTENSION_PRIMARY = createUniqueKey(TypeExtension.TYPE_EXTENSION, TypeExtension.TYPE_EXTENSION.TYPE, TypeExtension.TYPE_EXTENSION.EXTENSION);
@@ -90,12 +94,12 @@ public class Keys {
 
 	private static class ForeignKeys0 extends org.jooq.impl.AbstractKeys {
 
-		public static final ForeignKey<DirectoryRecord, TypeRecord> FK1_DIRECTORY_TYPE = createForeignKey(Keys.KEY_TYPE_PRIMARY, Directory.DIRECTORY, Directory.DIRECTORY.TYPE);
-		public static final ForeignKey<MoodResourceRecord, MoodRecord> FK1_MOOD_RESOURCE_MOOD = createForeignKey(Keys.KEY_MOOD_PRIMARY, MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.MOOD);
-		public static final ForeignKey<MoodResourceRecord, ResourceRecord> FK2_MOOD_RESOURCE_RESOURCE = createForeignKey(Keys.KEY_RESOURCE_PRIMARY, MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.RESOURCE);
-		public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = createForeignKey(Keys.KEY_RESOURCE_PRIMARY, Music.MUSIC, Music.MUSIC.RESOURCE);
-		public static final ForeignKey<PlaylistEntryRecord, PlaylistRecord> FK1_PLAYLIST_ENTRY_PLAYLIST = createForeignKey(Keys.KEY_PLAYLIST_PRIMARY, PlaylistEntry.PLAYLIST_ENTRY, PlaylistEntry.PLAYLIST_ENTRY.PLAYLIST);
-		public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY = createForeignKey(Keys.KEY_DIRECTORY_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.DIRECTORY);
-		public static final ForeignKey<TypeExtensionRecord, TypeRecord> FK1_TYPE_EXTENSION_TYPE = createForeignKey(Keys.KEY_TYPE_PRIMARY, TypeExtension.TYPE_EXTENSION, TypeExtension.TYPE_EXTENSION.TYPE);
+		public static final ForeignKey<DirectoryRecord, TypeRecord> FK1_DIRECTORY_TYPE = createForeignKey(KEY_TYPE_PRIMARY, Directory.DIRECTORY, Directory.DIRECTORY.TYPE);
+		public static final ForeignKey<MoodResourceRecord, MoodRecord> FK1_MOOD_RESOURCE_MOOD = createForeignKey(KEY_MOOD_PRIMARY, MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.MOOD);
+		public static final ForeignKey<MoodResourceRecord, ResourceRecord> FK2_MOOD_RESOURCE_RESOURCE = createForeignKey(KEY_RESOURCE_PRIMARY, MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.RESOURCE);
+		public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = createForeignKey(KEY_RESOURCE_PRIMARY, Music.MUSIC, Music.MUSIC.RESOURCE);
+		public static final ForeignKey<PlaylistEntryRecord, PlaylistRecord> FK1_PLAYLIST_ENTRY_PLAYLIST = createForeignKey(KEY_PLAYLIST_PRIMARY, PlaylistEntry.PLAYLIST_ENTRY, PlaylistEntry.PLAYLIST_ENTRY.PLAYLIST);
+		public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY = createForeignKey(KEY_DIRECTORY_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.DIRECTORY);
+		public static final ForeignKey<TypeExtensionRecord, TypeRecord> FK1_TYPE_EXTENSION_TYPE = createForeignKey(KEY_TYPE_PRIMARY, TypeExtension.TYPE_EXTENSION, TypeExtension.TYPE_EXTENSION.TYPE);
 	}
 }

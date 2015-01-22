@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.Keys;
 import net.feminaexlux.player.model.Media;
 import net.feminaexlux.player.model.tables.records.MusicRecord;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -30,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Music extends TableImpl<MusicRecord> {
 
-	private static final long serialVersionUID = -1218826354;
+	private static final long serialVersionUID = -1551279415;
 
 	/**
 	 * The reference instance of <code>media.music</code>
@@ -78,7 +79,7 @@ public class Music extends TableImpl<MusicRecord> {
 	/**
 	 * The column <code>media.music.rating</code>.
 	 */
-	public final TableField<MusicRecord, Byte> RATING = createField("rating", SQLDataType.TINYINT, this, "");
+	public final TableField<MusicRecord, Byte> RATING = createField("rating", SQLDataType.TINYINT.nullable(false).defaulted(true), this, "");
 
 	/**
 	 * Create a <code>media.music</code> table reference
@@ -122,8 +123,8 @@ public class Music extends TableImpl<MusicRecord> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<org.jooq.ForeignKey<MusicRecord, ?>> getReferences() {
-		return Arrays.<org.jooq.ForeignKey<MusicRecord, ?>>asList(Keys.FK1_MUSIC_RESOURCE);
+	public List<ForeignKey<MusicRecord, ?>> getReferences() {
+		return Arrays.<ForeignKey<MusicRecord, ?>>asList(Keys.FK1_MUSIC_RESOURCE);
 	}
 
 	/**
