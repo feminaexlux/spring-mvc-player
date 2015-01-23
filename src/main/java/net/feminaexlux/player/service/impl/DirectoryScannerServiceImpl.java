@@ -1,9 +1,11 @@
 package net.feminaexlux.player.service.impl;
 
 import net.feminaexlux.player.model.tables.records.MusicRecord;
+import net.feminaexlux.player.model.tables.records.NormalizedTextRecord;
 import net.feminaexlux.player.model.tables.records.ResourceRecord;
 import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.type.MediaType;
+import net.feminaexlux.player.util.Normalizer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,8 +37,11 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static net.feminaexlux.player.model.Tables.DIRECTORY;
 import static net.feminaexlux.player.model.Tables.MUSIC;
@@ -54,6 +59,7 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 	private List<MusicRecord> modifiedMusic = new ArrayList<>();
 	private List<ResourceRecord> modifiedResources = new ArrayList<>();
+	private Set<String> textForNormalizing = new HashSet<>();
 
 	@Async
 	@Override
@@ -70,6 +76,14 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 		database.batchStore(modifiedResources).execute();
 		database.batchStore(modifiedMusic).execute();
+		addNormalizedText();
+	}
+
+	private void addNormalizedText() {
+		List<NormalizedTextRecord> normalizedText = textForNormalizing.stream()
+				.map(text -> new NormalizedTextRecord(text, Normalizer.normalizeForUrl(text)))
+				.collect(Collectors.toList());
+		database.batchStore(normalizedText);
 	}
 
 	@Override
@@ -183,7 +197,7 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				String album = getAlbum(tag);
 				Integer trackNumber = getTrackNumber(tag);
 				String title = getTitle(tag, hash);
-				String genre = tag.getFirst(FieldKey.GENRE);
+				String genre = getGenre(tag);
 
 				MusicRecord musicRecord = getNewOrExistingMusic(hash);
 				musicRecord.setArtist(artist);
@@ -194,6 +208,7 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 				modifiedMusic.add(musicRecord);
 				flushMusicRecordBatch();
+				addTextForNormalizing(musicRecord);
 			}
 		}
 
@@ -210,29 +225,17 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 
 		private String getArtist(final Tag tag) {
 			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.ARTIST))) {
-				return tag.getFirst(FieldKey.ARTIST);
+				return tag.getFirst(FieldKey.ARTIST).trim();
 			} else if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.ALBUM_ARTIST))) {
-				return tag.getFirst(FieldKey.ALBUM_ARTIST);
+				return tag.getFirst(FieldKey.ALBUM_ARTIST).trim();
 			}
 
 			return UNKNOWN;
 		}
 
-		private String getAlbum(Tag tag) {
+		private String getAlbum(final Tag tag) {
 			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.ALBUM))) {
-				return tag.getFirst(FieldKey.ALBUM);
-			}
-
-			return UNKNOWN;
-		}
-
-		private String getTitle(Tag tag, String hash) {
-			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.TITLE))) {
-				return tag.getFirst(FieldKey.TITLE);
-			}
-
-			if (checksumToResource.containsKey(hash)) {
-				return checksumToResource.get(hash).getName();
+				return tag.getFirst(FieldKey.ALBUM).trim();
 			}
 
 			return UNKNOWN;
@@ -247,11 +250,34 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			return null;
 		}
 
+		private String getTitle(final Tag tag, final String hash) {
+			if (StringUtils.isNotEmpty(tag.getFirst(FieldKey.TITLE))) {
+				return tag.getFirst(FieldKey.TITLE).trim();
+			}
+
+			if (checksumToResource.containsKey(hash)) {
+				return checksumToResource.get(hash).getName();
+			}
+
+			return UNKNOWN;
+		}
+
+		private String getGenre(final Tag tag) {
+			return tag.getFirst(FieldKey.GENRE);
+		}
+
 		private void flushMusicRecordBatch() {
 			if (modifiedMusic.size() == BATCH_AMOUNT) {
 				database.batchStore(modifiedMusic).execute();
 				modifiedMusic.clear();
 			}
+		}
+
+		private void addTextForNormalizing(final MusicRecord musicRecord) {
+			textForNormalizing.add(musicRecord.getArtist());
+			textForNormalizing.add(musicRecord.getAlbum());
+			textForNormalizing.add(musicRecord.getTitle());
+			textForNormalizing.add(musicRecord.getGenre());
 		}
 
 		@Override

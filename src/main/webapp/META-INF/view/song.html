@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout">
+<title th:text="${title}">Title</title>
+
+<body>
+<section layout:fragment="content">
+    <h2 th:text="${title}">Title</h2>
+
+    <h3 th:text="${artist + ' - ' + album}">Artist - Album</h3>
+</section>
+</body>
+</html>
