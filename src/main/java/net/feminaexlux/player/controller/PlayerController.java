@@ -79,7 +79,7 @@ public class PlayerController extends AbstractController {
 	@RequestMapping(value = "/{checksum}", method = RequestMethod.GET)
 	public String play(@PathVariable final String checksum, final Model model) throws IOException {
 		MusicResource musicResource = musicService.find(checksum);
-		File temp = File.createTempFile("temp", "mp3");
+		File temp = File.createTempFile("temp", ".mp3");
 		FileOutputStream fileOutputStream = new FileOutputStream(temp);
 		Path original = Paths.get(musicResource.getFullFilePath());
 		Files.copy(original, fileOutputStream);
