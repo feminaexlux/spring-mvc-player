@@ -15,7 +15,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 @ComponentScan
 @Configuration
 @EnableWebMvc
-public class Application extends WebMvcConfigurerAdapter {
+public class ApplicationConfig extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public ServletContextTemplateResolver templateResolver() {

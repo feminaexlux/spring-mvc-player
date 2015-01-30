@@ -1,7 +1,5 @@
 package net.feminaexlux.player.controller;
 
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import net.feminaexlux.player.model.tables.records.MusicRecord;
 import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.service.impl.MusicServiceImpl.MusicResource;
@@ -19,11 +17,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -76,22 +75,43 @@ public class PlayerController extends AbstractController {
 		return "redirect:/";
 	}
 
-	@RequestMapping(value = "/{checksum}", method = RequestMethod.GET)
-	public String play(@PathVariable final String checksum, final Model model) throws IOException {
+	@RequestMapping(value = "/load/{checksum}.mp3", method = RequestMethod.GET)
+	public void load(@PathVariable final String checksum, final HttpServletResponse httpServletResponse) throws IOException {
 		MusicResource musicResource = musicService.find(checksum);
-		File temp = File.createTempFile("temp", ".mp3");
-		FileOutputStream fileOutputStream = new FileOutputStream(temp);
-		Path original = Paths.get(musicResource.getFullFilePath());
-		Files.copy(original, fileOutputStream);
 
-		Media media = new Media("file://" + temp.getAbsolutePath());
-		MediaPlayer mediaPlayer = new MediaPlayer(media);
-		mediaPlayer.play();
+		ServletOutputStream servletOutputStream = null;
+		BufferedInputStream bufferedInputStream = null;
+		try {
+			servletOutputStream = httpServletResponse.getOutputStream();
+			File song = Paths.get(musicResource.getFullFilePath()).toFile();
 
+			httpServletResponse.setContentType("audio/mpeg");
+			httpServletResponse.setContentLength((int) song.length());
+
+			FileInputStream fileInputStream = new FileInputStream(song);
+			bufferedInputStream = new BufferedInputStream(fileInputStream);
+			int readBytes = 0;
+			while ((readBytes = bufferedInputStream.read()) != -1) {
+				servletOutputStream.write(readBytes);
+			}
+		} finally {
+			if (servletOutputStream != null) {
+				servletOutputStream.close();
+			}
+
+			if (bufferedInputStream != null) {
+				bufferedInputStream.close();
+			}
+		}
+	}
+
+	@RequestMapping(value = "/{checksum}", method = RequestMethod.GET)
+	public String play(@PathVariable final String checksum, final Model model) {
+		MusicResource musicResource = musicService.find(checksum);
 		model.addAttribute("title", musicResource.getMusicRecord().getTitle());
 		model.addAttribute("artist", musicResource.getMusicRecord().getArtist());
 		model.addAttribute("album", musicResource.getMusicRecord().getAlbum());
-
+		model.addAttribute("checksum", checksum);
 		return "song";
 	}
 

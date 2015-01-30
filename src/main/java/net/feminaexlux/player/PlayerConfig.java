@@ -1,4 +1,4 @@
-package net.feminaexlux.player.config;
+package net.feminaexlux.player;
 
 import com.mysql.jdbc.Driver;
 import net.feminaexlux.player.service.DirectoryScannerService;

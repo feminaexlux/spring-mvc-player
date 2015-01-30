@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <start-class>net.feminaexlux.player.Application</start-class>
+        <start-class>net.feminaexlux.player.ApplicationConfig</start-class>
         <spring-version>4.1.2.RELEASE</spring-version>
         <!-- use UTF-8 for everything -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

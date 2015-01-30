@@ -12,6 +12,10 @@
     <h2 th:text="${title}">Title</h2>
 
     <h3 th:text="${artist + ' - ' + album}">Artist - Album</h3>
+
+    <audio controls>
+        <source th:src="@{/load/{checksum}.mp3(checksum=${checksum})}">
+    </audio>
 </section>
 </body>
 </html>
