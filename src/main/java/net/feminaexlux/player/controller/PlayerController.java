@@ -5,6 +5,7 @@ import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.service.impl.MusicServiceImpl.MusicResource;
 import net.feminaexlux.player.type.MediaType;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
@@ -12,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -32,7 +33,7 @@ import java.util.List;
 public class PlayerController extends AbstractController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlayerController.class);
-	private static final long ONE_MONTH = 28 * 24 * 60 * 60 * 1000;
+	private static final long ONE_MONTH = 2678400000l;
 
 	@Autowired
 	private DSLContext database;
@@ -79,32 +80,49 @@ public class PlayerController extends AbstractController {
 	}
 
 	@RequestMapping(value = "/play/{checksum}.mp3", method = RequestMethod.GET)
-	public ResponseEntity<byte[]> play(@PathVariable final String checksum, final HttpServletRequest httpServletRequest) throws IOException {
-		long expires = System.currentTimeMillis() + ONE_MONTH;
-		HttpHeaders httpHeaders = new HttpHeaders();
-
-		if (StringUtils.isNotEmpty(httpServletRequest.getHeader(HttpHeaders.IF_NONE_MATCH))) {
-			String eTag = httpServletRequest.getHeader(HttpHeaders.IF_NONE_MATCH);
-			if (eTag.startsWith("\"" + checksum)) {
-
-				httpHeaders.setETag(eTag);
-				httpHeaders.setExpires(expires);
-				return new ResponseEntity<>(new byte[0], httpHeaders, HttpStatus.NOT_MODIFIED);
-			}
-		} else if (httpServletRequest.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) > 0) {
-
-		}
-
+	public void play(@PathVariable final String checksum, final HttpServletRequest httpServletRequest, final HttpServletResponse httpServletResponse) throws IOException {
 		MusicResource musicResource = musicService.find(checksum);
 		File song = Paths.get(musicResource.getFullFilePath()).toFile();
-		FileInputStream fileInputStream = new FileInputStream(song);
 
-		httpHeaders.set(HttpHeaders.CONTENT_TYPE, "audio/mpeg");
-		httpHeaders.setContentLength(song.length());
-		httpHeaders.setETag("\"" + checksum + "-" + song.lastModified() + "\"");
-		httpHeaders.setExpires(expires);
+		long expires = System.currentTimeMillis() + ONE_MONTH;
+		String eTag = String.format("\"%s-%d\"", checksum, song.lastModified());
+		httpServletResponse.setHeader(HttpHeaders.ETAG, eTag);
+		httpServletResponse.setDateHeader(HttpHeaders.EXPIRES, expires);
 
-		return new ResponseEntity<>(IOUtils.toByteArray(fileInputStream), httpHeaders, HttpStatus.OK);
+		String ifNoneMatch = httpServletRequest.getHeader(HttpHeaders.IF_NONE_MATCH);
+		long dateHeader = httpServletRequest.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE);
+		if (eTag.equals(ifNoneMatch) || (dateHeader > 0 && (dateHeader + 1000) > song.lastModified())) {
+			httpServletResponse.setStatus(HttpStatus.NOT_MODIFIED.value());
+			return;
+		}
+
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_TYPE, "audio/mpeg");
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(song.length()));
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + musicResource.getFullFilePath() + "\"");
+
+		FileInputStream fileInputStream = null;
+		try {
+			fileInputStream = new FileInputStream(song);
+			byte[] stream = IOUtils.toByteArray(fileInputStream);
+			String range = httpServletRequest.getHeader(HttpHeaders.RANGE);
+			if (StringUtils.isNotEmpty(range) && range.startsWith("bytes=")) {
+				String[] rangeParts = range.substring(6).split("-");
+				int start = Integer.parseInt(rangeParts[0]);
+				int end = (int) song.length();
+
+				if (rangeParts.length > 1) {
+					end = Integer.parseInt(rangeParts[1]);
+				}
+
+				// TODO we have issues if any media file (think video) is over 2GB...
+				stream = ArrayUtils.subarray(stream, start, end);
+			}
+
+			IOUtils.write(stream, httpServletResponse.getOutputStream());
+		} finally {
+			IOUtils.closeQuietly(fileInputStream);
+			IOUtils.closeQuietly(httpServletResponse.getOutputStream());
+		}
 	}
 
 	@RequestMapping(value = "/{checksum}", method = RequestMethod.GET)

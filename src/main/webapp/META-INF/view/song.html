@@ -13,7 +13,7 @@
 
     <h3 th:text="${artist + ' - ' + album}">Artist - Album</h3>
 
-    <audio controls>
+    <audio controls autoplay>
         <source th:src="@{/play/{checksum}.mp3(checksum=${checksum})}">
     </audio>
 </section>
