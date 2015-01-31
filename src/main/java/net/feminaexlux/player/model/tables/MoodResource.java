@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class MoodResource extends TableImpl<MoodResourceRecord> {
 
-	private static final long serialVersionUID = -1245456600;
+	private static final long serialVersionUID = -1357387445;
 
 	/**
 	 * The reference instance of <code>media.mood_resource</code>
@@ -50,6 +50,11 @@ public class MoodResource extends TableImpl<MoodResourceRecord> {
 	 * The column <code>media.mood_resource.mood</code>.
 	 */
 	public final TableField<MoodResourceRecord, String> MOOD = createField("mood", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+
+	/**
+	 * The column <code>media.mood_resource.user</code>.
+	 */
+	public final TableField<MoodResourceRecord, String> USER = createField("user", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * The column <code>media.mood_resource.resource</code>.

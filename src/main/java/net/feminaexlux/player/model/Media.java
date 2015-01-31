@@ -10,6 +10,8 @@ import net.feminaexlux.player.model.tables.Music;
 import net.feminaexlux.player.model.tables.NormalizedText;
 import net.feminaexlux.player.model.tables.Playlist;
 import net.feminaexlux.player.model.tables.PlaylistEntry;
+import net.feminaexlux.player.model.tables.Principle;
+import net.feminaexlux.player.model.tables.PrincipleRole;
 import net.feminaexlux.player.model.tables.Resource;
 import net.feminaexlux.player.model.tables.Type;
 import net.feminaexlux.player.model.tables.TypeExtension;
@@ -17,6 +19,7 @@ import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
 
 import javax.annotation.Generated;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,7 +36,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Media extends SchemaImpl {
 
-	private static final long serialVersionUID = 787093819;
+	private static final long serialVersionUID = -993278684;
 
 	/**
 	 * The reference instance of <code>media</code>
@@ -49,7 +52,7 @@ public class Media extends SchemaImpl {
 
 	@Override
 	public final List<Table<?>> getTables() {
-		List result = new java.util.ArrayList();
+		List result = new ArrayList();
 		result.addAll(getTables0());
 		return result;
 	}
@@ -63,6 +66,8 @@ public class Media extends SchemaImpl {
 				NormalizedText.NORMALIZED_TEXT,
 				Playlist.PLAYLIST,
 				PlaylistEntry.PLAYLIST_ENTRY,
+				Principle.PRINCIPLE,
+				PrincipleRole.PRINCIPLE_ROLE,
 				Resource.RESOURCE,
 				Type.TYPE,
 				TypeExtension.TYPE_EXTENSION);

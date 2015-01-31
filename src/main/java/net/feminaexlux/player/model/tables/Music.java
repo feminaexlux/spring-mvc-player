@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Music extends TableImpl<MusicRecord> {
 
-	private static final long serialVersionUID = -1551279415;
+	private static final long serialVersionUID = -233104811;
 
 	/**
 	 * The reference instance of <code>media.music</code>

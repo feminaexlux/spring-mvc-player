@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.Keys;
 import net.feminaexlux.player.model.Media;
 import net.feminaexlux.player.model.tables.records.MoodRecord;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -30,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Mood extends TableImpl<MoodRecord> {
 
-	private static final long serialVersionUID = 1494147010;
+	private static final long serialVersionUID = 1606826744;
 
 	/**
 	 * The reference instance of <code>media.mood</code>
@@ -49,6 +50,16 @@ public class Mood extends TableImpl<MoodRecord> {
 	 * The column <code>media.mood.name</code>.
 	 */
 	public final TableField<MoodRecord, String> NAME = createField("name", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+
+	/**
+	 * The column <code>media.mood.user</code>.
+	 */
+	public final TableField<MoodRecord, String> USER = createField("user", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+
+	/**
+	 * The column <code>media.mood.description</code>.
+	 */
+	public final TableField<MoodRecord, String> DESCRIPTION = createField("description", SQLDataType.CLOB.length(65535), this, "");
 
 	/**
 	 * Create a <code>media.mood</code> table reference
@@ -86,6 +97,14 @@ public class Mood extends TableImpl<MoodRecord> {
 	@Override
 	public List<UniqueKey<MoodRecord>> getKeys() {
 		return Arrays.<UniqueKey<MoodRecord>>asList(Keys.KEY_MOOD_PRIMARY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ForeignKey<MoodRecord, ?>> getReferences() {
+		return Arrays.<ForeignKey<MoodRecord, ?>>asList(Keys.FK1_MOOD_PRINCIPLE);
 	}
 
 	/**

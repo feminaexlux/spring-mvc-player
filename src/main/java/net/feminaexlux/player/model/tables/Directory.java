@@ -15,7 +15,6 @@ import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import javax.annotation.Generated;
-import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Directory extends TableImpl<DirectoryRecord> {
 
-	private static final long serialVersionUID = 706657174;
+	private static final long serialVersionUID = 1917587952;
 
 	/**
 	 * The reference instance of <code>media.directory</code>
@@ -60,7 +59,7 @@ public class Directory extends TableImpl<DirectoryRecord> {
 	/**
 	 * The column <code>media.directory.lastScanned</code>.
 	 */
-	public final TableField<DirectoryRecord, Timestamp> LASTSCANNED = createField("lastScanned", SQLDataType.TIMESTAMP.nullable(false).defaulted(true), this, "");
+	public final TableField<DirectoryRecord, java.sql.Timestamp> LASTSCANNED = createField("lastScanned", SQLDataType.TIMESTAMP.nullable(false).defaulted(true), this, "");
 
 	/**
 	 * Create a <code>media.directory</code> table reference

@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
 	public static final Boolean DEBUG = Boolean.parseBoolean(System.getProperty("player.log.debug", "false"));
 
