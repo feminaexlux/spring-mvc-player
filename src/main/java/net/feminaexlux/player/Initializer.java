@@ -1,11 +1,9 @@
 package net.feminaexlux.player;
 
-import ch.qos.logback.classic.ViewStatusMessagesServlet;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,13 +17,6 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
 		Logger.getLogger("org.jaudiotagger").setLevel(Level.SEVERE);
 		Logger.getLogger("org.jooq").setLevel(Level.SEVERE);
-
-		if (DEBUG) {
-			ServletRegistration.Dynamic viewStatusMessages =
-					servletContext.addServlet("viewStatusMessages", new ViewStatusMessagesServlet());
-			viewStatusMessages.setLoadOnStartup(1);
-			viewStatusMessages.addMapping("/viewStatusMessages");
-		}
 	}
 
 	@Override
