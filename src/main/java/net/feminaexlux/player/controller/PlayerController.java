@@ -4,11 +4,15 @@ import net.feminaexlux.player.model.tables.records.MusicRecord;
 import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.service.impl.MusicServiceImpl.MusicResource;
 import net.feminaexlux.player.type.MediaType;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,9 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedInputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,6 +32,7 @@ import java.util.List;
 public class PlayerController extends AbstractController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PlayerController.class);
+	private static final long ONE_MONTH = 28 * 24 * 60 * 60 * 1000;
 
 	@Autowired
 	private DSLContext database;
@@ -75,38 +78,37 @@ public class PlayerController extends AbstractController {
 		return "redirect:/";
 	}
 
-	@RequestMapping(value = "/load/{checksum}.mp3", method = RequestMethod.GET)
-	public void load(@PathVariable final String checksum, final HttpServletResponse httpServletResponse) throws IOException {
-		MusicResource musicResource = musicService.find(checksum);
+	@RequestMapping(value = "/play/{checksum}.mp3", method = RequestMethod.GET)
+	public ResponseEntity<byte[]> play(@PathVariable final String checksum, final HttpServletRequest httpServletRequest) throws IOException {
+		long expires = System.currentTimeMillis() + ONE_MONTH;
+		HttpHeaders httpHeaders = new HttpHeaders();
 
-		ServletOutputStream servletOutputStream = null;
-		BufferedInputStream bufferedInputStream = null;
-		try {
-			servletOutputStream = httpServletResponse.getOutputStream();
-			File song = Paths.get(musicResource.getFullFilePath()).toFile();
+		if (StringUtils.isNotEmpty(httpServletRequest.getHeader(HttpHeaders.IF_NONE_MATCH))) {
+			String eTag = httpServletRequest.getHeader(HttpHeaders.IF_NONE_MATCH);
+			if (eTag.startsWith("\"" + checksum)) {
 
-			httpServletResponse.setContentType("audio/mpeg");
-			httpServletResponse.setContentLength((int) song.length());
-
-			FileInputStream fileInputStream = new FileInputStream(song);
-			bufferedInputStream = new BufferedInputStream(fileInputStream);
-			int readBytes = 0;
-			while ((readBytes = bufferedInputStream.read()) != -1) {
-				servletOutputStream.write(readBytes);
+				httpHeaders.setETag(eTag);
+				httpHeaders.setExpires(expires);
+				return new ResponseEntity<>(new byte[0], httpHeaders, HttpStatus.NOT_MODIFIED);
 			}
-		} finally {
-			if (servletOutputStream != null) {
-				servletOutputStream.close();
-			}
+		} else if (httpServletRequest.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) > 0) {
 
-			if (bufferedInputStream != null) {
-				bufferedInputStream.close();
-			}
 		}
+
+		MusicResource musicResource = musicService.find(checksum);
+		File song = Paths.get(musicResource.getFullFilePath()).toFile();
+		FileInputStream fileInputStream = new FileInputStream(song);
+
+		httpHeaders.set(HttpHeaders.CONTENT_TYPE, "audio/mpeg");
+		httpHeaders.setContentLength(song.length());
+		httpHeaders.setETag("\"" + checksum + "-" + song.lastModified() + "\"");
+		httpHeaders.setExpires(expires);
+
+		return new ResponseEntity<>(IOUtils.toByteArray(fileInputStream), httpHeaders, HttpStatus.OK);
 	}
 
 	@RequestMapping(value = "/{checksum}", method = RequestMethod.GET)
-	public String play(@PathVariable final String checksum, final Model model) {
+	public String song(@PathVariable final String checksum, final Model model) {
 		MusicResource musicResource = musicService.find(checksum);
 		model.addAttribute("title", musicResource.getMusicRecord().getTitle());
 		model.addAttribute("artist", musicResource.getMusicRecord().getArtist());

@@ -25,10 +25,10 @@ import java.sql.SQLException;
 @EnableScheduling
 public class PlayerConfig {
 
-	private static final int    FIXED_TIME_SPAN = 60 * 1000;
-	private static final String SQL_URL         = System.getProperty("player.sql.url", "jdbc:mysql://localhost:3306/media");
-	private static final String SQL_USERNAME    = System.getProperty("player.sql.username", "media");
-	private static final String SQL_PASSWORD    = System.getProperty("player.sql.password", "media");
+	private static final int TWO_MINUTES = 2 * 60 * 1000;
+	private static final String SQL_URL = System.getProperty("player.sql.url", "jdbc:mysql://localhost:3306/media");
+	private static final String SQL_USERNAME = System.getProperty("player.sql.username", "media");
+	private static final String SQL_PASSWORD = System.getProperty("player.sql.password", "media");
 
 	@Bean
 	public DSLContext database() throws SQLException {
@@ -52,7 +52,7 @@ public class PlayerConfig {
 		return new ViewServiceImpl();
 	}
 
-	@Scheduled(initialDelay = FIXED_TIME_SPAN, fixedDelay = FIXED_TIME_SPAN)
+	@Scheduled(initialDelay = TWO_MINUTES, fixedDelay = TWO_MINUTES)
 	public void keepAlive() throws SQLException {
 		database().query("select 1").execute();
 	}
