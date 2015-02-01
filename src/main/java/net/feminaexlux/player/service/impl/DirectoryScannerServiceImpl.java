@@ -1,8 +1,8 @@
 package net.feminaexlux.player.service.impl;
 
-import net.feminaexlux.player.model.tables.records.MusicRecord;
-import net.feminaexlux.player.model.tables.records.NormalizedTextRecord;
-import net.feminaexlux.player.model.tables.records.ResourceRecord;
+import net.feminaexlux.player.model.table.record.MusicRecord;
+import net.feminaexlux.player.model.table.record.NormalizedTextRecord;
+import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.service.DirectoryScannerService;
 import net.feminaexlux.player.type.MediaType;
 import net.feminaexlux.player.util.Normalizer;
@@ -43,10 +43,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static net.feminaexlux.player.model.Tables.DIRECTORY;
-import static net.feminaexlux.player.model.Tables.MUSIC;
-import static net.feminaexlux.player.model.Tables.RESOURCE;
-import static net.feminaexlux.player.model.Tables.TYPE_EXTENSION;
+import static net.feminaexlux.player.model.Table.DIRECTORY;
+import static net.feminaexlux.player.model.Table.MUSIC;
+import static net.feminaexlux.player.model.Table.RESOURCE;
+import static net.feminaexlux.player.model.Table.TYPE_EXTENSION;
 
 @Service
 public class DirectoryScannerServiceImpl implements DirectoryScannerService {

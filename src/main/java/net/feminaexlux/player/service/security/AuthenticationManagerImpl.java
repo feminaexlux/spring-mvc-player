@@ -15,6 +15,7 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	private UserDetailsService userDetailsService;
 

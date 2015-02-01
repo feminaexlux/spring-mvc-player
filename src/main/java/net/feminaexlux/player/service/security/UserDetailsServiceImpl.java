@@ -1,9 +1,9 @@
 package net.feminaexlux.player.service.security;
 
-import net.feminaexlux.player.model.tables.Principal;
-import net.feminaexlux.player.model.tables.PrincipalRole;
-import net.feminaexlux.player.model.tables.records.PrincipalRecord;
-import net.feminaexlux.player.model.tables.records.PrincipalRoleRecord;
+import net.feminaexlux.player.model.table.Principal;
+import net.feminaexlux.player.model.table.PrincipalRole;
+import net.feminaexlux.player.model.table.record.PrincipalRecord;
+import net.feminaexlux.player.model.table.record.PrincipalRoleRecord;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
@@ -30,27 +30,33 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		PrincipalRecord principal = database
-				.select().from(Principal.PRINCIPAL)
-				.where(Principal.PRINCIPAL.USERNAME.equal(username))
-				.fetchOneInto(PrincipalRecord.class);
-
+		PrincipalRecord principal = getPrincipal(username);
 		if (principal == null) {
 			LOG.warn("Failed to find user by {}", username);
 			throw new UsernameNotFoundException("Username not found");
 		}
 
-		List<PrincipalRoleRecord> principalRoles = database
-				.select().from(PrincipalRole.PRINCIPAL_ROLE)
-				.where(PrincipalRole.PRINCIPAL_ROLE.USERNAME.equal(username))
-				.fetchInto(PrincipalRoleRecord.class);
-
+		List<PrincipalRoleRecord> principalRoles = getPrincipalRoles(username);
 		if (CollectionUtils.isEmpty(principalRoles)) {
 			LOG.warn("User {} has no roles", username);
 			throw new UsernameNotFoundException("Roles not found");
 		}
 
 		return new MediaUserDetails(principal, principalRoles);
+	}
+
+	private PrincipalRecord getPrincipal(final String username) {
+		return database
+				.select().from(Principal.PRINCIPAL)
+				.where(Principal.PRINCIPAL.USERNAME.equal(username))
+				.fetchOneInto(PrincipalRecord.class);
+	}
+
+	private List<PrincipalRoleRecord> getPrincipalRoles(final String username) {
+		return database
+				.select().from(PrincipalRole.PRINCIPAL_ROLE)
+				.where(PrincipalRole.PRINCIPAL_ROLE.USERNAME.equal(username))
+				.fetchInto(PrincipalRoleRecord.class);
 	}
 
 	public static final class MediaUserDetails implements UserDetails {

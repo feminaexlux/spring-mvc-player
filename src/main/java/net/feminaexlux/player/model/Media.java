@@ -3,18 +3,18 @@
  */
 package net.feminaexlux.player.model;
 
-import net.feminaexlux.player.model.tables.Directory;
-import net.feminaexlux.player.model.tables.Mood;
-import net.feminaexlux.player.model.tables.MoodResource;
-import net.feminaexlux.player.model.tables.Music;
-import net.feminaexlux.player.model.tables.NormalizedText;
-import net.feminaexlux.player.model.tables.Playlist;
-import net.feminaexlux.player.model.tables.PlaylistEntry;
-import net.feminaexlux.player.model.tables.Principal;
-import net.feminaexlux.player.model.tables.PrincipalRole;
-import net.feminaexlux.player.model.tables.Resource;
-import net.feminaexlux.player.model.tables.Type;
-import net.feminaexlux.player.model.tables.TypeExtension;
+import net.feminaexlux.player.model.table.Directory;
+import net.feminaexlux.player.model.table.Mood;
+import net.feminaexlux.player.model.table.MoodResource;
+import net.feminaexlux.player.model.table.Music;
+import net.feminaexlux.player.model.table.NormalizedText;
+import net.feminaexlux.player.model.table.Playlist;
+import net.feminaexlux.player.model.table.PlaylistEntry;
+import net.feminaexlux.player.model.table.Principal;
+import net.feminaexlux.player.model.table.PrincipalRole;
+import net.feminaexlux.player.model.table.Resource;
+import net.feminaexlux.player.model.table.Type;
+import net.feminaexlux.player.model.table.TypeExtension;
 import org.jooq.Table;
 import org.jooq.impl.SchemaImpl;
 

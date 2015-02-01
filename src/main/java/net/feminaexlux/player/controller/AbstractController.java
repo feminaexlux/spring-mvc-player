@@ -8,7 +8,8 @@ public abstract class AbstractController {
 
 	@Autowired
 	protected MusicService musicService;
+
 	@Autowired
-	protected ViewService  viewService;
+	protected ViewService viewService;
 
 }

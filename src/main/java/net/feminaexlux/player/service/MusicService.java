@@ -1,7 +1,7 @@
 package net.feminaexlux.player.service;
 
-import net.feminaexlux.player.model.tables.records.MusicRecord;
-import net.feminaexlux.player.service.impl.MusicServiceImpl.MusicResource;
+import net.feminaexlux.player.model.container.MusicResource;
+import net.feminaexlux.player.model.table.record.MusicRecord;
 
 import java.util.List;
 

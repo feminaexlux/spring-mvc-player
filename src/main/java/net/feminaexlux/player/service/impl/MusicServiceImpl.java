@@ -1,10 +1,10 @@
 package net.feminaexlux.player.service.impl;
 
-import net.feminaexlux.player.model.tables.NormalizedText;
-import net.feminaexlux.player.model.tables.records.MusicRecord;
-import net.feminaexlux.player.model.tables.records.ResourceRecord;
+import net.feminaexlux.player.model.container.MusicResource;
+import net.feminaexlux.player.model.table.NormalizedText;
+import net.feminaexlux.player.model.table.record.MusicRecord;
+import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.service.MusicService;
-import org.apache.commons.lang3.ArrayUtils;
 import org.jooq.DSLContext;
 import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static net.feminaexlux.player.model.Tables.MUSIC;
-import static net.feminaexlux.player.model.Tables.NORMALIZED_TEXT;
-import static net.feminaexlux.player.model.Tables.RESOURCE;
+import static net.feminaexlux.player.model.Table.MUSIC;
+import static net.feminaexlux.player.model.Table.NORMALIZED_TEXT;
+import static net.feminaexlux.player.model.Table.RESOURCE;
 
 @Service
 public class MusicServiceImpl implements MusicService {
@@ -29,7 +29,7 @@ public class MusicServiceImpl implements MusicService {
 		NormalizedText titleText = NORMALIZED_TEXT.as("titleText");
 		NormalizedText genreText = NORMALIZED_TEXT.as("genreText");
 
-		return database.select(ArrayUtils.addAll(MUSIC.fields())).from(RESOURCE)
+		return database.selectDistinct(MUSIC.fields()).from(RESOURCE)
 				.join(MUSIC).on(MUSIC.RESOURCE.eq(RESOURCE.CHECKSUM))
 				.join(artistText).on(MUSIC.ARTIST.equal(artistText.ORIGINAL))
 				.join(albumText).on(MUSIC.ARTIST.equal(albumText.ORIGINAL))
@@ -97,29 +97,6 @@ public class MusicServiceImpl implements MusicService {
 		MusicRecord musicRecord = database.fetchOne(MUSIC, MUSIC.RESOURCE.equal(checksum));
 		ResourceRecord resourceRecord = database.fetchOne(RESOURCE, RESOURCE.CHECKSUM.equal(checksum));
 		return new MusicResource(musicRecord, resourceRecord);
-	}
-
-	public static class MusicResource {
-
-		private final MusicRecord musicRecord;
-		private final ResourceRecord resourceRecord;
-
-		public MusicResource(final MusicRecord musicRecord, final ResourceRecord resourceRecord) {
-			this.musicRecord = musicRecord;
-			this.resourceRecord = resourceRecord;
-		}
-
-		public MusicRecord getMusicRecord() {
-			return musicRecord;
-		}
-
-		public ResourceRecord getResourceRecord() {
-			return resourceRecord;
-		}
-
-		public String getFullFilePath() {
-			return resourceRecord.getDirectory() + resourceRecord.getName();
-		}
 	}
 
 }
