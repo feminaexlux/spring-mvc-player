@@ -104,7 +104,7 @@ public class Mood extends TableImpl<MoodRecord> {
 	 */
 	@Override
 	public List<ForeignKey<MoodRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<MoodRecord, ?>>asList(Keys.FK1_MOOD_PRINCIPLE);
+		return Arrays.<ForeignKey<MoodRecord, ?>>asList(Keys.FK1_MOOD_PRINCIPAL);
 	}
 
 	/**

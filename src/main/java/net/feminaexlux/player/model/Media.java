@@ -10,8 +10,8 @@ import net.feminaexlux.player.model.tables.Music;
 import net.feminaexlux.player.model.tables.NormalizedText;
 import net.feminaexlux.player.model.tables.Playlist;
 import net.feminaexlux.player.model.tables.PlaylistEntry;
-import net.feminaexlux.player.model.tables.Principle;
-import net.feminaexlux.player.model.tables.PrincipleRole;
+import net.feminaexlux.player.model.tables.Principal;
+import net.feminaexlux.player.model.tables.PrincipalRole;
 import net.feminaexlux.player.model.tables.Resource;
 import net.feminaexlux.player.model.tables.Type;
 import net.feminaexlux.player.model.tables.TypeExtension;
@@ -66,8 +66,8 @@ public class Media extends SchemaImpl {
 				NormalizedText.NORMALIZED_TEXT,
 				Playlist.PLAYLIST,
 				PlaylistEntry.PLAYLIST_ENTRY,
-				Principle.PRINCIPLE,
-				PrincipleRole.PRINCIPLE_ROLE,
+				Principal.PRINCIPAL,
+				PrincipalRole.PRINCIPAL_ROLE,
 				Resource.RESOURCE,
 				Type.TYPE,
 				TypeExtension.TYPE_EXTENSION);

@@ -99,7 +99,7 @@ public class Playlist extends TableImpl<PlaylistRecord> {
 	 */
 	@Override
 	public List<ForeignKey<PlaylistRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<PlaylistRecord, ?>>asList(Keys.FK1_PLAYLIST_PRINCIPLE);
+		return Arrays.<ForeignKey<PlaylistRecord, ?>>asList(Keys.FK1_PLAYLIST_PRINCIPAL);
 	}
 
 	/**

@@ -10,8 +10,8 @@ import net.feminaexlux.player.model.tables.Music;
 import net.feminaexlux.player.model.tables.NormalizedText;
 import net.feminaexlux.player.model.tables.Playlist;
 import net.feminaexlux.player.model.tables.PlaylistEntry;
-import net.feminaexlux.player.model.tables.Principle;
-import net.feminaexlux.player.model.tables.PrincipleRole;
+import net.feminaexlux.player.model.tables.Principal;
+import net.feminaexlux.player.model.tables.PrincipalRole;
 import net.feminaexlux.player.model.tables.Resource;
 import net.feminaexlux.player.model.tables.Type;
 import net.feminaexlux.player.model.tables.TypeExtension;
@@ -69,12 +69,12 @@ public class Tables {
 	/**
 	 * The table media.principle
 	 */
-	public static final Principle PRINCIPLE = Principle.PRINCIPLE;
+	public static final Principal PRINCIPAL = Principal.PRINCIPAL;
 
 	/**
 	 * The table media.principle_role
 	 */
-	public static final PrincipleRole PRINCIPLE_ROLE = PrincipleRole.PRINCIPLE_ROLE;
+	public static final PrincipalRole PRINCIPAL_ROLE = PrincipalRole.PRINCIPAL_ROLE;
 
 	/**
 	 * The table media.resource
