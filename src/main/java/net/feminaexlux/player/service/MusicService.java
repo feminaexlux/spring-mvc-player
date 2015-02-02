@@ -21,4 +21,6 @@ public interface MusicService {
 
 	MusicResource find(final String checksum);
 
+	void setPlayed(final String checksum);
+
 }

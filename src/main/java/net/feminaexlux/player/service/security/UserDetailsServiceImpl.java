@@ -1,5 +1,6 @@
 package net.feminaexlux.player.service.security;
 
+import net.feminaexlux.player.exception.UserHasNoRolesException;
 import net.feminaexlux.player.model.table.Principal;
 import net.feminaexlux.player.model.table.PrincipalRole;
 import net.feminaexlux.player.model.table.record.PrincipalRecord;
@@ -33,13 +34,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		PrincipalRecord principal = getPrincipal(username);
 		if (principal == null) {
 			LOG.warn("Failed to find user by {}", username);
-			throw new UsernameNotFoundException("Username not found");
+			throw new UsernameNotFoundException("Username " + username + " not found");
 		}
 
 		List<PrincipalRoleRecord> principalRoles = getPrincipalRoles(username);
 		if (CollectionUtils.isEmpty(principalRoles)) {
 			LOG.warn("User {} has no roles", username);
-			throw new UsernameNotFoundException("Roles not found");
+			throw new UserHasNoRolesException("Roles not found for " + username);
 		}
 
 		return new MediaUserDetails(principal, principalRoles);

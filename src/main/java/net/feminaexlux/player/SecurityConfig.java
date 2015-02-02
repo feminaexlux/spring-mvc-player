@@ -40,13 +40,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	protected void configure(HttpSecurity http) throws Exception {
-		http
-				.authorizeRequests()
+		http.authorizeRequests()
 				.antMatchers("/js/**").permitAll()
-				.antMatchers("/setting/**").hasRole("ADMIN")
+				.antMatchers("/settings/**").hasRole("ADMIN")
 				.anyRequest().authenticated()
-				.and()
-				.formLogin();
+				.and().exceptionHandling().accessDeniedPage("/403")
+				.and().formLogin();
 	}
 
 	@Bean

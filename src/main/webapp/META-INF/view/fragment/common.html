@@ -23,12 +23,14 @@
 		<tbody>
 		<tr th:each="music : ${displayResults}">
 			<td>
-				<a href="javascript:" th:href="@{/artists/{artist}(artist=${music.artist})}" th:text="${#strings.isEmpty(music.artist)} ? '(Unknown)' : ${music.artist}">
+                <a href="javascript:" th:href="@{/music/artists/{artist}(artist=${music.artist})}"
+                   th:text="${#strings.isEmpty(music.artist)} ? '(Unknown)' : ${music.artist}">
 					Artist
 				</a>
 			</td>
 			<td>
-				<a href="javascript:" th:href="@{/albums/{album}(album=${music.album})}" th:text="${#strings.isEmpty(music.album)} ? '(Unknown)' : ${music.album}">
+                <a href="javascript:" th:href="@{/music/albums/{album}(album=${music.album})}"
+                   th:text="${#strings.isEmpty(music.album)} ? '(Unknown)' : ${music.album}">
 					Album
 				</a>
 			</td>
@@ -46,7 +48,8 @@
 	<h2 th:text="${title}">List</h2>
 	<ol>
 		<li th:each="result : ${displayResults}">
-			<a href="javascript:" th:href="@{/{type}/{name}(type=${title.toLowerCase()},name=${result})}" th:text="${#strings.isEmpty(result)} ? '(Unknown)' : ${result}">
+            <a href="javascript:" th:href="@{/music/{type}/{name}(type=${title.toLowerCase()},name=${result})}"
+               th:text="${#strings.isEmpty(result)} ? '(Unknown)' : ${result}">
 				Result
 			</a>
 		</li>

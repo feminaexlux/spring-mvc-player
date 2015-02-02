@@ -1,11 +1,11 @@
-package net.feminaexlux.player.page;
+package net.feminaexlux.player.model.element;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
-import static net.feminaexlux.player.page.HashCodePrimes.MUSIC;
+import static net.feminaexlux.player.model.element.HashCodePrimes.MUSIC;
 
 public class MusicItem implements Serializable {
 

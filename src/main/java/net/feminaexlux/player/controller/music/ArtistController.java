@@ -1,6 +1,5 @@
 package net.feminaexlux.player.controller.music;
 
-import net.feminaexlux.player.controller.AbstractController;
 import net.feminaexlux.player.model.table.record.MusicRecord;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/artists")
-public class ArtistController extends AbstractController {
+@RequestMapping(value = "/music/artists")
+public class ArtistController extends AbstractMusicController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String list(final Model model) {

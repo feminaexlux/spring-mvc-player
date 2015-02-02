@@ -31,14 +31,14 @@
 
     <div class="error-message" th:unless="${errorMessage == null}" th:text="${errorMessage}"></div>
 
-    <form th:action="@{/scan}" method="post">
+    <form th:action="@{/settings/scan}" method="post">
         <fieldset>
             <input type="text" name="directory" placeholder="Directory">
             <input type="submit" value="Add/Update Directory">
         </fieldset>
     </form>
 
-    <form th:action="@{/search}" method="post">
+    <form th:action="@{/music/search}" method="post">
         <fieldset>
             <input type="text" name="query" placeholder="Search...">
             <input type="submit" value="Search">
@@ -47,8 +47,8 @@
 
     <hr>
 
-    <a href="/artists">Artists</a>
-    <a href="/albums">Albums</a>
+    <a href="/music/artists">Artists</a>
+    <a href="/music/albums">Albums</a>
 </section>
 </body>
 </html>

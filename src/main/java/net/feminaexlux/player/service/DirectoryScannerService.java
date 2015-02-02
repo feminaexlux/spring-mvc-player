@@ -1,6 +1,6 @@
 package net.feminaexlux.player.service;
 
-import net.feminaexlux.player.type.MediaType;
+import net.feminaexlux.player.model.type.MediaType;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package net.feminaexlux.player.page;
+package net.feminaexlux.player.model.element;
 
 enum HashCodePrimes {
 

@@ -10,6 +10,7 @@ import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import static net.feminaexlux.player.model.Table.MUSIC;
@@ -99,4 +100,10 @@ public class MusicServiceImpl implements MusicService {
 		return new MusicResource(musicRecord, resourceRecord);
 	}
 
+	@Override
+	public void setPlayed(final String checksum) {
+		ResourceRecord resourceRecord = database.fetchOne(RESOURCE, RESOURCE.CHECKSUM.equal(checksum));
+		resourceRecord.setLastaccessed(new Timestamp(System.currentTimeMillis()));
+		database.executeUpdate(resourceRecord);
+	}
 }

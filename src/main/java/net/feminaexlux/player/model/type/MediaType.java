@@ -1,4 +1,4 @@
-package net.feminaexlux.player.type;
+package net.feminaexlux.player.model.type;
 
 public enum MediaType {
 	MUSIC;

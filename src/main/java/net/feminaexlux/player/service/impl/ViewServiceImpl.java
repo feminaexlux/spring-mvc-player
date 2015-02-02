@@ -1,7 +1,7 @@
 package net.feminaexlux.player.service.impl;
 
+import net.feminaexlux.player.model.element.MusicItem;
 import net.feminaexlux.player.model.table.record.MusicRecord;
-import net.feminaexlux.player.page.MusicItem;
 import net.feminaexlux.player.service.ViewService;
 import org.apache.commons.collections4.CollectionUtils;
 

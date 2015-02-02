@@ -25,9 +25,10 @@ public class StreamingServiceImpl implements StreamingService {
 	                                 final HttpServletRequest httpServletRequest,
 	                                 final HttpServletResponse httpServletResponse) throws IOException {
 		File song = Paths.get(musicResource.getFullFilePath()).toFile();
-
 		long expires = System.currentTimeMillis() + ONE_MONTH;
 		String eTag = String.format(E_TAG_FORMAT, musicResource.getResourceRecord().getChecksum(), song.lastModified());
+
+		httpServletResponse.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=" + ONE_MONTH + ", no-cache");
 		httpServletResponse.setHeader(HttpHeaders.ETAG, eTag);
 		httpServletResponse.setDateHeader(HttpHeaders.EXPIRES, expires);
 
@@ -36,11 +37,10 @@ public class StreamingServiceImpl implements StreamingService {
 			return;
 		}
 
-		httpServletResponse.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=" + ONE_MONTH + ", no-cache");
 		httpServletResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + musicResource.getFullFilePath() + "\"");
 		httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(song.length()));
 		httpServletResponse.setHeader(HttpHeaders.CONTENT_TYPE, "audio/mpeg");
-		httpServletResponse.setHeader(HttpHeaders.PRAGMA, "");
+		httpServletResponse.setHeader(HttpHeaders.PRAGMA, "no-cache");
 		streamIntoResponse(httpServletRequest, httpServletResponse, song);
 	}
 
