@@ -29,56 +29,56 @@ public class PrincipalRecord extends UpdatableRecordImpl<PrincipalRecord> implem
 	private static final long serialVersionUID = 1045964513;
 
 	/**
-	 * Setter for <code>media.principle.username</code>.
+	 * Setter for <code>media.principal.username</code>.
 	 */
 	public void setUsername(String value) {
 		setValue(0, value);
 	}
 
 	/**
-	 * Getter for <code>media.principle.username</code>.
+	 * Getter for <code>media.principal.username</code>.
 	 */
 	public String getUsername() {
 		return (String) getValue(0);
 	}
 
 	/**
-	 * Setter for <code>media.principle.password</code>.
+	 * Setter for <code>media.principal.password</code>.
 	 */
 	public void setPassword(String value) {
 		setValue(1, value);
 	}
 
 	/**
-	 * Getter for <code>media.principle.password</code>.
+	 * Getter for <code>media.principal.password</code>.
 	 */
 	public String getPassword() {
 		return (String) getValue(1);
 	}
 
 	/**
-	 * Setter for <code>media.principle.name</code>.
+	 * Setter for <code>media.principal.name</code>.
 	 */
 	public void setName(String value) {
 		setValue(2, value);
 	}
 
 	/**
-	 * Getter for <code>media.principle.name</code>.
+	 * Getter for <code>media.principal.name</code>.
 	 */
 	public String getName() {
 		return (String) getValue(2);
 	}
 
 	/**
-	 * Setter for <code>media.principle.lastLogin</code>.
+	 * Setter for <code>media.principal.lastLogin</code>.
 	 */
 	public void setLastlogin(Timestamp value) {
 		setValue(3, value);
 	}
 
 	/**
-	 * Getter for <code>media.principle.lastLogin</code>.
+	 * Getter for <code>media.principal.lastLogin</code>.
 	 */
 	public Timestamp getLastlogin() {
 		return (Timestamp) getValue(3);
@@ -229,14 +229,14 @@ public class PrincipalRecord extends UpdatableRecordImpl<PrincipalRecord> implem
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Create a detached PrincipleRecord
+	 * Create a detached PrincipalRecord
 	 */
 	public PrincipalRecord() {
 		super(Principal.PRINCIPAL);
 	}
 
 	/**
-	 * Create a detached, initialised PrincipleRecord
+	 * Create a detached, initialised PrincipalRecord
 	 */
 	public PrincipalRecord(String username, String password, String name, Timestamp lastlogin) {
 		super(Principal.PRINCIPAL);

@@ -11,6 +11,7 @@ import net.feminaexlux.player.model.table.NormalizedText;
 import net.feminaexlux.player.model.table.Playlist;
 import net.feminaexlux.player.model.table.PlaylistEntry;
 import net.feminaexlux.player.model.table.Principal;
+import net.feminaexlux.player.model.table.PrincipalResourceAccess;
 import net.feminaexlux.player.model.table.PrincipalRole;
 import net.feminaexlux.player.model.table.Resource;
 import net.feminaexlux.player.model.table.Type;
@@ -67,14 +68,19 @@ public class Table {
 	public static final PlaylistEntry PLAYLIST_ENTRY = PlaylistEntry.PLAYLIST_ENTRY;
 
 	/**
-	 * The table media.principle
+	 * The table media.principal
 	 */
 	public static final Principal PRINCIPAL = Principal.PRINCIPAL;
 
 	/**
-	 * The table media.principle_role
+	 * The table media.principal_role
 	 */
 	public static final PrincipalRole PRINCIPAL_ROLE = PrincipalRole.PRINCIPAL_ROLE;
+
+	/**
+	 * The table media.principal_resource_access
+	 */
+	public static final PrincipalResourceAccess PRINCIPAL_RESOURCE_ACCESS = PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS;
 
 	/**
 	 * The table media.resource

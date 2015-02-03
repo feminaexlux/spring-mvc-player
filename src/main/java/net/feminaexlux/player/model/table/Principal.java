@@ -34,7 +34,7 @@ public class Principal extends TableImpl<PrincipalRecord> {
 	private static final long serialVersionUID = -1094079425;
 
 	/**
-	 * The reference instance of <code>media.principle</code>
+	 * The reference instance of <code>media.principal</code>
 	 */
 	public static final Principal PRINCIPAL = new Principal();
 
@@ -47,34 +47,34 @@ public class Principal extends TableImpl<PrincipalRecord> {
 	}
 
 	/**
-	 * The column <code>media.principle.username</code>.
+	 * The column <code>media.principal.username</code>.
 	 */
 	public final TableField<PrincipalRecord, String> USERNAME = createField("username", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.principle.password</code>.
+	 * The column <code>media.principal.password</code>.
 	 */
 	public final TableField<PrincipalRecord, String> PASSWORD = createField("password", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.principle.name</code>.
+	 * The column <code>media.principal.name</code>.
 	 */
 	public final TableField<PrincipalRecord, String> NAME = createField("name", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.principle.lastLogin</code>.
+	 * The column <code>media.principal.lastLogin</code>.
 	 */
 	public final TableField<PrincipalRecord, Timestamp> LASTLOGIN = createField("lastLogin", SQLDataType.TIMESTAMP, this, "");
 
 	/**
-	 * Create a <code>media.principle</code> table reference
+	 * Create a <code>media.principal</code> table reference
 	 */
 	public Principal() {
 		this("principal", null);
 	}
 
 	/**
-	 * Create an aliased <code>media.principle</code> table reference
+	 * Create an aliased <code>media.principal</code> table reference
 	 */
 	public Principal(String alias) {
 		this(alias, Principal.PRINCIPAL);

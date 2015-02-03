@@ -11,6 +11,7 @@ import net.feminaexlux.player.model.table.NormalizedText;
 import net.feminaexlux.player.model.table.Playlist;
 import net.feminaexlux.player.model.table.PlaylistEntry;
 import net.feminaexlux.player.model.table.Principal;
+import net.feminaexlux.player.model.table.PrincipalResourceAccess;
 import net.feminaexlux.player.model.table.PrincipalRole;
 import net.feminaexlux.player.model.table.Resource;
 import net.feminaexlux.player.model.table.Type;
@@ -68,6 +69,7 @@ public class Media extends SchemaImpl {
 				PlaylistEntry.PLAYLIST_ENTRY,
 				Principal.PRINCIPAL,
 				PrincipalRole.PRINCIPAL_ROLE,
+				PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS,
 				Resource.RESOURCE,
 				Type.TYPE,
 				TypeExtension.TYPE_EXTENSION);

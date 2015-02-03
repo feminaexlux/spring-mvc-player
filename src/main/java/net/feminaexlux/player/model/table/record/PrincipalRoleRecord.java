@@ -27,28 +27,28 @@ public class PrincipalRoleRecord extends UpdatableRecordImpl<PrincipalRoleRecord
 	private static final long serialVersionUID = 849839945;
 
 	/**
-	 * Setter for <code>media.principle_role.username</code>.
+	 * Setter for <code>media.principal_role.username</code>.
 	 */
 	public void setUsername(String value) {
 		setValue(0, value);
 	}
 
 	/**
-	 * Getter for <code>media.principle_role.username</code>.
+	 * Getter for <code>media.principal_role.username</code>.
 	 */
 	public String getUsername() {
 		return (String) getValue(0);
 	}
 
 	/**
-	 * Setter for <code>media.principle_role.role</code>.
+	 * Setter for <code>media.principal_role.role</code>.
 	 */
 	public void setRole(String value) {
 		setValue(1, value);
 	}
 
 	/**
-	 * Getter for <code>media.principle_role.role</code>.
+	 * Getter for <code>media.principal_role.role</code>.
 	 */
 	public String getRole() {
 		return (String) getValue(1);
@@ -149,14 +149,14 @@ public class PrincipalRoleRecord extends UpdatableRecordImpl<PrincipalRoleRecord
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Create a detached PrincipleRoleRecord
+	 * Create a detached PrincipalRoleRecord
 	 */
 	public PrincipalRoleRecord() {
 		super(PrincipalRole.PRINCIPAL_ROLE);
 	}
 
 	/**
-	 * Create a detached, initialised PrincipleRoleRecord
+	 * Create a detached, initialised PrincipalRoleRecord
 	 */
 	public PrincipalRoleRecord(String username, String role) {
 		super(PrincipalRole.PRINCIPAL_ROLE);

@@ -34,7 +34,7 @@ public class PrincipalRole extends TableImpl<PrincipalRoleRecord> {
 	private static final long serialVersionUID = 928240853;
 
 	/**
-	 * The reference instance of <code>media.principle_role</code>
+	 * The reference instance of <code>media.principal_role</code>
 	 */
 	public static final PrincipalRole PRINCIPAL_ROLE = new PrincipalRole();
 
@@ -47,24 +47,24 @@ public class PrincipalRole extends TableImpl<PrincipalRoleRecord> {
 	}
 
 	/**
-	 * The column <code>media.principle_role.username</code>.
+	 * The column <code>media.principal_role.username</code>.
 	 */
 	public final TableField<PrincipalRoleRecord, String> USERNAME = createField("username", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.principle_role.role</code>.
+	 * The column <code>media.principal_role.role</code>.
 	 */
 	public final TableField<PrincipalRoleRecord, String> ROLE = createField("role", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * Create a <code>media.principle_role</code> table reference
+	 * Create a <code>media.principal_role</code> table reference
 	 */
 	public PrincipalRole() {
 		this("principal_role", null);
 	}
 
 	/**
-	 * Create an aliased <code>media.principle_role</code> table reference
+	 * Create an aliased <code>media.principal_role</code> table reference
 	 */
 	public PrincipalRole(String alias) {
 		this(alias, PrincipalRole.PRINCIPAL_ROLE);
