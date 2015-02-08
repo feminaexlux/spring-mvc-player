@@ -5,6 +5,10 @@ import net.feminaexlux.player.service.StreamingService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.datatype.Artwork;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -21,16 +25,12 @@ public class StreamingServiceImpl implements StreamingService {
 	private static final String E_TAG_FORMAT = "\"%s-%d\"";
 
 	@Override
-	public void setHeadersOnResponse(final MusicResource musicResource,
-	                                 final HttpServletRequest httpServletRequest,
-	                                 final HttpServletResponse httpServletResponse) throws IOException {
+	public void setMusicHeadersOnResponse(final MusicResource musicResource,
+	                                      final HttpServletRequest httpServletRequest,
+	                                      final HttpServletResponse httpServletResponse) throws IOException {
 		File song = Paths.get(musicResource.getFullFilePath()).toFile();
-		long expires = System.currentTimeMillis() + ONE_MONTH;
 		String eTag = String.format(E_TAG_FORMAT, musicResource.getResourceRecord().getChecksum(), song.lastModified());
-
-		httpServletResponse.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=" + ONE_MONTH + ", no-cache");
-		httpServletResponse.setHeader(HttpHeaders.ETAG, eTag);
-		httpServletResponse.setDateHeader(HttpHeaders.EXPIRES, expires);
+		defaultResponseProperties(httpServletResponse, eTag);
 
 		if (notModified(httpServletRequest, eTag, song.lastModified())) {
 			httpServletResponse.setStatus(HttpStatus.NOT_MODIFIED.value());
@@ -40,8 +40,42 @@ public class StreamingServiceImpl implements StreamingService {
 		httpServletResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + musicResource.getFullFilePath() + "\"");
 		httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(song.length()));
 		httpServletResponse.setHeader(HttpHeaders.CONTENT_TYPE, "audio/mpeg");
-		httpServletResponse.setHeader(HttpHeaders.PRAGMA, "no-cache");
 		streamIntoResponse(httpServletRequest, httpServletResponse, song);
+	}
+
+	@Override
+	public void setImageHeadersOnResponse(final MusicResource musicResource,
+	                                      final HttpServletRequest httpServletRequest,
+	                                      final HttpServletResponse httpServletResponse) throws Exception {
+		File song = Paths.get(musicResource.getFullFilePath()).toFile();
+		AudioFile audioFile = AudioFileIO.read(song);
+		Tag tag = audioFile.getTag();
+		if (tag == null || tag.getFirstArtwork() == null) {
+			httpServletResponse.setStatus(HttpStatus.NOT_FOUND.value());
+			return;
+		}
+
+		String eTag = String.format(E_TAG_FORMAT, musicResource.getResourceRecord().getChecksum() + "-img", song.lastModified());
+		defaultResponseProperties(httpServletResponse, eTag);
+
+		if (notModified(httpServletRequest, eTag, song.lastModified())) {
+			httpServletResponse.setStatus(HttpStatus.NOT_MODIFIED.value());
+			return;
+		}
+
+		Artwork artwork = tag.getFirstArtwork();
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=\"" + artwork.getImageUrl() + "\"");
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_LENGTH, String.valueOf(artwork.getBinaryData().length));
+		httpServletResponse.setHeader(HttpHeaders.CONTENT_TYPE, artwork.getMimeType());
+		streamIntoResponse(httpServletResponse, artwork.getBinaryData());
+	}
+
+	private void defaultResponseProperties(HttpServletResponse httpServletResponse, String eTag) {
+		long expires = System.currentTimeMillis() + ONE_MONTH;
+		httpServletResponse.setHeader(HttpHeaders.CACHE_CONTROL, "public, max-age=" + ONE_MONTH + ", no-cache");
+		httpServletResponse.setHeader(HttpHeaders.ETAG, eTag);
+		httpServletResponse.setDateHeader(HttpHeaders.EXPIRES, expires);
+		httpServletResponse.setHeader(HttpHeaders.PRAGMA, "no-cache");
 	}
 
 	private boolean notModified(final HttpServletRequest httpServletRequest, final String eTag, final long lastModified) {
@@ -53,14 +87,17 @@ public class StreamingServiceImpl implements StreamingService {
 	private void streamIntoResponse(final HttpServletRequest httpServletRequest,
 	                                final HttpServletResponse httpServletResponse,
 	                                final File file) throws IOException {
-		FileInputStream fileInputStream = null;
+		FileInputStream fileInputStream = new FileInputStream(file);
+		String range = httpServletRequest.getHeader(HttpHeaders.RANGE);
+		byte[] stream = buildStream(range, fileInputStream, file.length());
+		streamIntoResponse(httpServletResponse, stream);
+	}
+
+	private void streamIntoResponse(final HttpServletResponse httpServletResponse,
+	                                final byte[] stream) throws IOException {
 		try {
-			fileInputStream = new FileInputStream(file);
-			String range = httpServletRequest.getHeader(HttpHeaders.RANGE);
-			byte[] stream = buildStream(range, fileInputStream, file.length());
 			IOUtils.write(stream, httpServletResponse.getOutputStream());
 		} finally {
-			IOUtils.closeQuietly(fileInputStream);
 			IOUtils.closeQuietly(httpServletResponse.getOutputStream());
 		}
 	}

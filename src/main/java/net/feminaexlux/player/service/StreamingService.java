@@ -8,8 +8,12 @@ import java.io.IOException;
 
 public interface StreamingService {
 
-	void setHeadersOnResponse(final MusicResource musicResource,
-	                          final HttpServletRequest httpServletRequest,
-	                          final HttpServletResponse httpServletResponse) throws IOException;
+	void setMusicHeadersOnResponse(final MusicResource musicResource,
+	                               final HttpServletRequest httpServletRequest,
+	                               final HttpServletResponse httpServletResponse) throws IOException;
+
+	void setImageHeadersOnResponse(final MusicResource musicResource,
+	                               final HttpServletRequest httpServletRequest,
+	                               final HttpServletResponse httpServletResponse) throws Exception;
 
 }

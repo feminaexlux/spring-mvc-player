@@ -51,8 +51,16 @@ public class MusicController extends AbstractMusicController {
 	                 final HttpServletRequest httpServletRequest,
 	                 final HttpServletResponse httpServletResponse) throws IOException {
 		MusicResource musicResource = musicService.find(checksum);
-		streamingService.setHeadersOnResponse(musicResource, httpServletRequest, httpServletResponse);
+		streamingService.setMusicHeadersOnResponse(musicResource, httpServletRequest, httpServletResponse);
 		musicService.setPlayed(checksum);
+	}
+
+	@RequestMapping(value = "/image/{checksum}", method = RequestMethod.GET)
+	public void image(@PathVariable final String checksum,
+	                  final HttpServletRequest httpServletRequest,
+	                  final HttpServletResponse httpServletResponse) throws Exception {
+		MusicResource musicResource = musicService.find(checksum);
+		streamingService.setImageHeadersOnResponse(musicResource, httpServletRequest, httpServletResponse);
 	}
 
 	@RequestMapping(value = "/{checksum}", method = RequestMethod.GET)

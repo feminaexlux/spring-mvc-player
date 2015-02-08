@@ -36,8 +36,7 @@
 			</td>
 			<td th:text="${music.trackNumber}">Track</td>
 			<td>
-                <a href="javascript:" th:href="@{/music/{checksum}(checksum=${music.resource})}"
-                   th:text="${music.title}">Title</a>
+                <a href="javascript:" class="song-link" th:attr="data-song=${music.resource}" th:text="${music.title}">Title</a>
 			</td>
 		</tr>
 		</tbody>

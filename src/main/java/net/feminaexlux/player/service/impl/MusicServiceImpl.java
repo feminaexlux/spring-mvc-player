@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static net.feminaexlux.player.model.Table.MUSIC;
 import static net.feminaexlux.player.model.Table.NORMALIZED_TEXT;
@@ -101,9 +103,28 @@ public class MusicServiceImpl implements MusicService {
 	}
 
 	@Override
+	public List<MusicResource> findAll() {
+		Map<String, MusicRecord> music = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE, MusicRecord.class);
+		Map<String, ResourceRecord> resources = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM, ResourceRecord.class);
+
+		List<MusicResource> musicResources = new ArrayList<>();
+		for (Map.Entry<String, MusicRecord> musicRecord : music.entrySet()) {
+			ResourceRecord resource = resources.get(musicRecord.getKey());
+			musicResources.add(new MusicResource(musicRecord.getValue(), resource));
+		}
+
+		return musicResources;
+	}
+
+	@Override
 	public void setPlayed(final String checksum) {
 		ResourceRecord resourceRecord = database.fetchOne(RESOURCE, RESOURCE.CHECKSUM.equal(checksum));
 		resourceRecord.setLastaccessed(new Timestamp(System.currentTimeMillis()));
 		database.executeUpdate(resourceRecord);
+	}
+
+	@Override
+	public void update(final List<MusicRecord> musicRecords) {
+		database.batchUpdate(musicRecords).execute();
 	}
 }
