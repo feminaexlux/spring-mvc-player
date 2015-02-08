@@ -8,8 +8,6 @@ import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,11 +21,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 @Configuration
-@EnableScheduling
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private static final int TWO_MINUTES = 2 * 60 * 1000;
 	private static final String SQL_URL = System.getProperty("player.sql.url", "jdbc:mysql://localhost:3306/media");
 	private static final String SQL_USERNAME = System.getProperty("player.sql.username", "media");
 	private static final String SQL_PASSWORD = System.getProperty("player.sql.password", "media");
@@ -61,11 +57,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return new UserDetailsServiceImpl();
-	}
-
-	@Scheduled(initialDelay = TWO_MINUTES, fixedDelay = TWO_MINUTES)
-	public void keepAlive() throws SQLException {
-		database().query("select 1").execute();
 	}
 
 }

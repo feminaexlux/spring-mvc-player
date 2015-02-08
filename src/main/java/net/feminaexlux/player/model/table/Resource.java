@@ -15,6 +15,7 @@ import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
 import javax.annotation.Generated;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Resource extends TableImpl<ResourceRecord> {
 
-	private static final long serialVersionUID = -853480105;
+	private static final long serialVersionUID = -18975157;
 
 	/**
 	 * The reference instance of <code>media.resource</code>
@@ -64,7 +65,12 @@ public class Resource extends TableImpl<ResourceRecord> {
 	/**
 	 * The column <code>media.resource.lastAccessed</code>.
 	 */
-	public final TableField<ResourceRecord, java.sql.Timestamp> LASTACCESSED = createField("lastAccessed", SQLDataType.TIMESTAMP, this, "");
+	public final TableField<ResourceRecord, Timestamp> LASTACCESSED = createField("lastAccessed", SQLDataType.TIMESTAMP, this, "");
+
+	/**
+	 * The column <code>media.resource.updated</code>.
+	 */
+	public final TableField<ResourceRecord, Timestamp> UPDATED = createField("updated", SQLDataType.TIMESTAMP, this, "");
 
 	/**
 	 * Create a <code>media.resource</code> table reference

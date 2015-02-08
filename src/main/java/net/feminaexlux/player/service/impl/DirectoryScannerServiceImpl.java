@@ -1,5 +1,6 @@
 package net.feminaexlux.player.service.impl;
 
+import net.feminaexlux.player.model.table.record.DirectoryRecord;
 import net.feminaexlux.player.model.table.record.MusicRecord;
 import net.feminaexlux.player.model.table.record.NormalizedTextRecord;
 import net.feminaexlux.player.model.table.record.ResourceRecord;
@@ -79,13 +80,6 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 		addNormalizedText();
 	}
 
-	private void addNormalizedText() {
-		List<NormalizedTextRecord> normalizedText = textForNormalizing.stream()
-				.map(text -> new NormalizedTextRecord(text, Normalizer.normalizeForUrl(text)))
-				.collect(Collectors.toList());
-		database.batchStore(normalizedText);
-	}
-
 	@Override
 	public void clearLibrary(final String directory, final MediaType type) {
 		List<MusicRecord> affectedMusic = database
@@ -94,6 +88,21 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 				.where(RESOURCE.DIRECTORY.equal(directory))
 				.fetchInto(MusicRecord.class);
 		database.batchDelete(affectedMusic);
+	}
+
+	@Override
+	public void updateAllLibraries() throws IOException {
+		List<DirectoryRecord> directories = database.fetch(DIRECTORY);
+		for (DirectoryRecord directoryRecord : directories) {
+			buildLibrary(directoryRecord.getLocation(), MediaType.find(directoryRecord.getType()));
+		}
+	}
+
+	private void addNormalizedText() {
+		List<NormalizedTextRecord> normalizedText = textForNormalizing.stream()
+				.map(text -> new NormalizedTextRecord(text, Normalizer.normalizeForUrl(text)))
+				.collect(Collectors.toList());
+		database.batchStore(normalizedText);
 	}
 
 	protected class LibraryWalker extends SimpleFileVisitor<Path> {
@@ -135,6 +144,12 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			if (attributes.isRegularFile() && isRightMediaType(file)) {
 				try {
 					String hash = hash(file);
+
+					ResourceRecord resource = checksumToResource.get(hash);
+					if (resource.getUpdated() != null && resource.getUpdated().getTime() < file.toFile().lastModified()) {
+						return FileVisitResult.CONTINUE;
+					}
+
 					updateResourceProperties(file, hash);
 					updateMusicProperties(file, hash);
 				} catch (CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException | NoSuchAlgorithmException e) {
@@ -168,6 +183,7 @@ public class DirectoryScannerServiceImpl implements DirectoryScannerService {
 			resourceRecord.setChecksum(hash);
 			resourceRecord.setDirectory(directory);
 			resourceRecord.setName(file.toString().substring(directory.length()));
+			resourceRecord.setUpdated(new Timestamp(System.currentTimeMillis()));
 			modifiedResources.add(resourceRecord);
 			flushResourceRecordBatch();
 		}

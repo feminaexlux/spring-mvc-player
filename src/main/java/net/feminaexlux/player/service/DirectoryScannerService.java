@@ -10,4 +10,6 @@ public interface DirectoryScannerService {
 
 	void clearLibrary(final String directory, final MediaType type);
 
+	void updateAllLibraries() throws IOException;
+
 }
