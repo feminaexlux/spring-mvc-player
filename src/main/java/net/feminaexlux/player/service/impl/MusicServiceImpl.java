@@ -62,7 +62,7 @@ public class MusicServiceImpl implements MusicService {
 	}
 
 	@Override
-	public List<String> findAllArtists() {
+	public Map<String, String> findAllArtists() {
 		return findAllBy(MUSIC.ARTIST);
 	}
 
@@ -72,7 +72,7 @@ public class MusicServiceImpl implements MusicService {
 	}
 
 	@Override
-	public List<String> findAllAlbums() {
+	public Map<String, String> findAllAlbums() {
 		return findAllBy(MUSIC.ALBUM);
 	}
 
@@ -81,11 +81,11 @@ public class MusicServiceImpl implements MusicService {
 		return findBy(MUSIC.ALBUM, album);
 	}
 
-	private List<String> findAllBy(final TableField<MusicRecord, String> field) {
-		return database.selectDistinct(field)
+	private Map<String, String> findAllBy(final TableField<MusicRecord, String> field) {
+		return database.selectDistinct(field, NORMALIZED_TEXT.NORMALIZED)
 				.from(MUSIC)
-				.orderBy(field)
-				.fetchInto(String.class);
+				.leftOuterJoin(NORMALIZED_TEXT).on(NORMALIZED_TEXT.ORIGINAL.equal(field))
+				.fetchMap(field, NORMALIZED_TEXT.NORMALIZED);
 	}
 
 	private List<MusicRecord> findBy(final TableField<MusicRecord, String> field, final String term) {

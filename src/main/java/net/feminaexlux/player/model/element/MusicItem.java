@@ -9,18 +9,22 @@ import static net.feminaexlux.player.model.element.HashCodePrimes.MUSIC;
 
 public class MusicItem implements Serializable {
 
-	private final String  resource;
-	private final String  artist;
-	private final String  album;
-	private final String  title;
-	private final String  genre;
+	private final String resource;
+	private final String artist;
+	private final String artistUrl;
+	private final String album;
+	private final String albumUrl;
+	private final String title;
+	private final String genre;
 	private final Integer trackNumber;
-	private final int     rating;
+	private final int rating;
 
 	private MusicItem(final Builder builder) {
 		this.resource = builder.resource;
 		this.artist = builder.artist;
+		this.artistUrl = builder.artistUrl;
 		this.album = builder.album;
+		this.albumUrl = builder.albumUrl;
 		this.title = builder.title;
 		this.genre = builder.genre;
 		this.trackNumber = builder.trackNumber;
@@ -35,8 +39,16 @@ public class MusicItem implements Serializable {
 		return artist;
 	}
 
+	public String getArtistUrl() {
+		return artistUrl;
+	}
+
 	public String getAlbum() {
 		return album;
+	}
+
+	public String getAlbumUrl() {
+		return albumUrl;
 	}
 
 	public String getTitle() {
@@ -94,13 +106,15 @@ public class MusicItem implements Serializable {
 
 	public static class Builder {
 
-		private String  resource;
-		private String  artist;
-		private String  album;
-		private String  title;
-		private String  genre;
+		private String resource;
+		private String artist;
+		private String artistUrl;
+		private String album;
+		private String albumUrl;
+		private String title;
+		private String genre;
 		private Integer trackNumber;
-		private int     rating;
+		private int rating;
 
 		public Builder resource(String resource) {
 			this.resource = resource;
@@ -112,8 +126,18 @@ public class MusicItem implements Serializable {
 			return this;
 		}
 
+		public Builder artistUrl(String artistUrl) {
+			this.artistUrl = artistUrl;
+			return this;
+		}
+
 		public Builder album(String album) {
 			this.album = album;
+			return this;
+		}
+
+		public Builder albumUrl(String albumUrl) {
+			this.albumUrl = albumUrl;
 			return this;
 		}
 

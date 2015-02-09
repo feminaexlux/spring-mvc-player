@@ -4,6 +4,7 @@ import net.feminaexlux.player.model.container.MusicResource;
 import net.feminaexlux.player.model.table.record.MusicRecord;
 
 import java.util.List;
+import java.util.Map;
 
 public interface MusicService {
 
@@ -11,11 +12,11 @@ public interface MusicService {
 
 	List<MusicRecord> recentlyPlayed(final int max);
 
-	List<String> findAllArtists();
+	Map<String, String> findAllArtists();
 
 	List<MusicRecord> findByArtist(final String artist);
 
-	List<String> findAllAlbums();
+	Map<String, String> findAllAlbums();
 
 	List<MusicRecord> findByAlbum(final String album);
 
