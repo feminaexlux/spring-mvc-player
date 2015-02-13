@@ -2,7 +2,8 @@ package net.feminaexlux.player.model.element;
 
 enum HashCodePrimes {
 
-	MUSIC(127, 131);
+	MUSIC(127, 131),
+	KEY_VALUE(137, 139);
 
 	private final int prime;
 	private final int multiplier;

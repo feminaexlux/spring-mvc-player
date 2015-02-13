@@ -6,6 +6,7 @@ import net.feminaexlux.player.model.table.record.MusicRecord;
 import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.service.MusicService;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.TableField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,14 +86,31 @@ public class MusicServiceImpl implements MusicService {
 		return database.selectDistinct(field, NORMALIZED_TEXT.NORMALIZED)
 				.from(MUSIC)
 				.leftOuterJoin(NORMALIZED_TEXT).on(NORMALIZED_TEXT.ORIGINAL.equal(field))
+				.orderBy(buildOrderBy(field))
 				.fetchMap(field, NORMALIZED_TEXT.NORMALIZED);
 	}
 
 	private List<MusicRecord> findBy(final TableField<MusicRecord, String> field, final String term) {
 		return database.select(MUSIC.fields()).from(MUSIC)
+				.leftOuterJoin(NORMALIZED_TEXT).on(NORMALIZED_TEXT.ORIGINAL.equal(field))
 				.where(field.equal(term))
-				.orderBy(MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TRACK)
+				.or(NORMALIZED_TEXT.NORMALIZED.equal(term))
+				.orderBy(buildOrderBy(field))
 				.fetchInto(MusicRecord.class);
+	}
+
+	private Field[] buildOrderBy(final TableField<MusicRecord, String> field) {
+		List<Field> orderBy = new ArrayList<>();
+
+		if (field.equals(MUSIC.ARTIST)) {
+			orderBy.add(MUSIC.ARTIST);
+		}
+
+		orderBy.add(MUSIC.ALBUM);
+		orderBy.add(MUSIC.TRACK);
+		orderBy.add(MUSIC.TITLE);
+
+		return orderBy.toArray(new Field[0]);
 	}
 
 	@Override

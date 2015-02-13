@@ -47,8 +47,8 @@
 	<h2 th:text="${title}">List</h2>
 	<ol>
 		<li th:each="result : ${displayResults}">
-            <a href="javascript:" th:href="@{/music/{type}/{name}(type=${title.toLowerCase()},name=${result})}"
-               th:text="${#strings.isEmpty(result)} ? '(Unknown)' : ${result}">
+            <a href="javascript:" th:href="@{/music/{type}/{name}(type=${title.toLowerCase()},name=${result.value})}"
+               th:text="${#strings.isEmpty(result.key)} ? '(Unknown)' : ${result.key}">
 				Result
 			</a>
 		</li>
