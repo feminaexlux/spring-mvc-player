@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout">
+<title>Media Player</title>
+
+<body>
+    <section layout:fragment="content">
+        <h1>Settings</h1>
+
+        <div class="success-message" th:unless="${successMessage == null}" th:text="${successMessage}"></div>
+        <div class="error-message" th:unless="${errorMessage == null}" th:text="${errorMessage}"></div>
+
+        <h2>Directories</h2>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Directory</th>
+                    <th>Type</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="directory : ${directories}">
+                    <td th:text="${directory.location}">Directory</td>
+                    <td th:text="${directory.type}">Type</td>
+                    <td>
+                        <form th:action="@{/settings/scan}" method="post">
+                            <input type="hidden" name="directory" th:value="${directory.location}">
+                            <input type="submit" value="Update">
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form th:action="@{/settings/scan}" method="post">
+            <fieldset>
+                <input type="text" name="directory" placeholder="Directory">
+                <input type="submit" value="Add Directory">
+            </fieldset>
+        </form>
+
+        <hr>
+
+        <h2>Users</h2>
+
+        <form th:action="@{/settings/addUser}" method="post">
+            <fieldset>
+                <input type="text" name="username" placeholder="Username">
+                <input type="password" name="password" placeholder="Password">
+                <input type="name" name="name" placeholder="Full Name">
+                <input type="submit" value="Add User">
+            </fieldset>
+        </form>
+
+    </section>
+</body>
+</html>

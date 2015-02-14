@@ -1,14 +1,15 @@
-package net.feminaexlux.player.model.element;
+package net.feminaexlux.player.model.item;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serializable;
 
-import static net.feminaexlux.player.model.element.HashCodePrimes.MUSIC;
+import static net.feminaexlux.player.model.item.HashCodePrimes.MUSIC;
 
 public class MusicItem implements Serializable {
 
+	private static final long serialVersionUID = 3121558031287702463L;
 	private final String resource;
 	private final String artist;
 	private final String artistUrl;

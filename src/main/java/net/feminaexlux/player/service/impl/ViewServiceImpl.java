@@ -1,8 +1,10 @@
 package net.feminaexlux.player.service.impl;
 
-import net.feminaexlux.player.model.element.KeyValue;
-import net.feminaexlux.player.model.element.MusicItem;
+import net.feminaexlux.player.model.item.DirectoryItem;
+import net.feminaexlux.player.model.item.KeyValue;
+import net.feminaexlux.player.model.item.MusicItem;
 import net.feminaexlux.player.model.table.NormalizedText;
+import net.feminaexlux.player.model.table.record.DirectoryRecord;
 import net.feminaexlux.player.model.table.record.MusicRecord;
 import net.feminaexlux.player.service.ViewService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,6 +28,20 @@ public class ViewServiceImpl implements ViewService {
 
 	@Autowired
 	private DSLContext database;
+
+	@Override
+	public List<DirectoryItem> toDirectoryItems(final List<DirectoryRecord> directoryRecords) {
+		if (CollectionUtils.isEmpty(directoryRecords)) {
+			return Collections.emptyList();
+		}
+
+		return directoryRecords.stream().map(record ->
+				new DirectoryItem.Builder()
+						.location(record.getLocation())
+						.type(record.getType())
+						.build())
+				.collect(Collectors.toList());
+	}
 
 	@Override
 	public List<MusicItem> toMusicItems(final List<MusicRecord> musicRecords) {

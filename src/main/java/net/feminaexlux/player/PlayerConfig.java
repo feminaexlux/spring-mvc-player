@@ -1,12 +1,16 @@
 package net.feminaexlux.player;
 
-import net.feminaexlux.player.service.DirectoryScannerService;
+import net.feminaexlux.player.service.DirectoryService;
+import net.feminaexlux.player.service.LibraryService;
 import net.feminaexlux.player.service.MusicService;
 import net.feminaexlux.player.service.StreamingService;
+import net.feminaexlux.player.service.UserService;
 import net.feminaexlux.player.service.ViewService;
-import net.feminaexlux.player.service.impl.DirectoryScannerServiceImpl;
+import net.feminaexlux.player.service.impl.DirectoryServiceImpl;
+import net.feminaexlux.player.service.impl.LibraryServiceImpl;
 import net.feminaexlux.player.service.impl.MusicServiceImpl;
 import net.feminaexlux.player.service.impl.StreamingServiceImpl;
+import net.feminaexlux.player.service.impl.UserServiceImpl;
 import net.feminaexlux.player.service.impl.ViewServiceImpl;
 import org.jooq.DSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +32,13 @@ public class PlayerConfig {
 	private DSLContext database;
 
 	@Bean
-	public DirectoryScannerService directoryScannerService() {
-		return new DirectoryScannerServiceImpl();
+	public DirectoryService directoryService() {
+		return new DirectoryServiceImpl();
+	}
+
+	@Bean
+	public LibraryService libraryService() {
+		return new LibraryServiceImpl();
 	}
 
 	@Bean
@@ -40,6 +49,11 @@ public class PlayerConfig {
 	@Bean
 	public StreamingService streamingService() {
 		return new StreamingServiceImpl();
+	}
+
+	@Bean
+	public UserService userService() {
+		return new UserServiceImpl();
 	}
 
 	@Bean
@@ -54,8 +68,8 @@ public class PlayerConfig {
 
 	@Scheduled(cron = "0 0 0 * * *")
 	public void updateDatabase() throws IOException {
-		DirectoryScannerService directoryScannerService = directoryScannerService();
-		directoryScannerService.updateAllLibraries();
+		LibraryService libraryService = libraryService();
+		libraryService.updateAllLibraries();
 	}
 
 }

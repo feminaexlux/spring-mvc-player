@@ -4,7 +4,7 @@ import net.feminaexlux.player.model.type.MediaType;
 
 import java.io.IOException;
 
-public interface DirectoryScannerService {
+public interface LibraryService {
 
 	void buildLibrary(final String directory, final MediaType type) throws IOException;
 

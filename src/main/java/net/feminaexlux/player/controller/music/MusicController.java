@@ -22,6 +22,9 @@ import java.util.List;
 @RequestMapping(value = "/music")
 public class MusicController extends AbstractMusicController {
 
+	private static final String MUSIC_VIEW = "music/music";
+	private static final String SONG_VIEW = "music/song";
+
 	@Autowired
 	private StreamingService streamingService;
 
@@ -29,7 +32,7 @@ public class MusicController extends AbstractMusicController {
 	public String recentlyPlayed(final Model model) {
 		List<MusicRecord> recentlyPlayedResult = musicService.recentlyPlayed(10);
 		model.addAttribute("recentlyPlayed", viewService.toMusicItems(recentlyPlayedResult));
-		return "music";
+		return MUSIC_VIEW;
 	}
 
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -43,7 +46,7 @@ public class MusicController extends AbstractMusicController {
 
 		List<MusicRecord> searchResults = musicService.search(query);
 		model.addAttribute("searchResults", viewService.toMusicItems(searchResults));
-		return "music";
+		return MUSIC_VIEW;
 	}
 
 	@RequestMapping(value = "/play/{checksum}.mp3", method = RequestMethod.GET)
@@ -70,7 +73,7 @@ public class MusicController extends AbstractMusicController {
 		model.addAttribute("artist", musicResource.getMusicRecord().getArtist());
 		model.addAttribute("album", musicResource.getMusicRecord().getAlbum());
 		model.addAttribute("checksum", checksum);
-		return "song";
+		return SONG_VIEW;
 	}
 
 }

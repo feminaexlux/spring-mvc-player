@@ -14,11 +14,13 @@ import java.util.List;
 @RequestMapping(value = "/music/artists")
 public class ArtistController extends AbstractMusicController {
 
+	private static final String ARTIST_VIEW = "music/artist";
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String list(final Model model) {
 		model.addAttribute("title", "Artists");
 		model.addAttribute("items", viewService.toKeyValues(musicService.findAllArtists()));
-		return "list";
+		return LIST_VIEW;
 	}
 
 	@RequestMapping(value = "/{artist}", method = RequestMethod.GET)
@@ -26,7 +28,7 @@ public class ArtistController extends AbstractMusicController {
 		List<MusicRecord> artistMusic = musicService.findByArtist(artist);
 		model.addAttribute("artist", CollectionUtils.isNotEmpty(artistMusic) ? artistMusic.get(0).getArtist() : artist);
 		model.addAttribute("items", viewService.toMusicItems(artistMusic));
-		return "artist";
+		return ARTIST_VIEW;
 	}
 
 }

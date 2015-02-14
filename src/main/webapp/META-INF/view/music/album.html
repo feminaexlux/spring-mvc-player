@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout">
+<title th:text="${album}">Album</title>
+
+<body>
+    <h1 th:text="${album}">Album</h1>
+    <section layout:fragment="content">
+        <div th:unless="${#lists.isEmpty(items)}" th:remove="tag">
+            <table th:replace="fragment/common :: table(${items}, ${album})">
+                <caption>Album</caption>
+                <thead>
+                    <tr>
+                        <th>Artist</th>
+                        <th>Album</th>
+                        <th>Title</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </section>
+</body>
+</html>

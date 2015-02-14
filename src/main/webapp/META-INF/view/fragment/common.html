@@ -1,58 +1,60 @@
 <!DOCTYPE html>
 
 <html lang="en"
-	  xmlns="http://www.w3.org/1999/xhtml"
-	  xmlns:th="http://www.thymeleaf.org"
-	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-	  layout:decorator="layout">
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout">
 <title>Media Results</title>
 
 <body>
-<h1>Media Results</h1>
-<section th:fragment="table(displayResults, caption)" th:remove="tag">
-	<table>
-		<caption th:text="${caption}">Results</caption>
-		<thead>
-		<tr>
-			<th>Artist</th>
-			<th>Album</th>
-			<th>Track</th>
-			<th>Title</th>
-		</tr>
-		</thead>
-		<tbody>
-		<tr th:each="music : ${displayResults}">
-			<td>
-                <a href="javascript:" th:href="@{/music/artists/{artist}(artist=${music.artist})}"
-                   th:text="${#strings.isEmpty(music.artist)} ? '(Unknown)' : ${music.artist}">
-					Artist
-				</a>
-			</td>
-			<td>
-                <a href="javascript:" th:href="@{/music/albums/{album}(album=${music.album})}"
-                   th:text="${#strings.isEmpty(music.album)} ? '(Unknown)' : ${music.album}">
-					Album
-				</a>
-			</td>
-			<td th:text="${music.trackNumber}">Track</td>
-			<td>
-                <a href="javascript:" class="song-link" th:attr="data-song=${music.resource}" th:text="${music.title}">Title</a>
-			</td>
-		</tr>
-		</tbody>
-	</table>
-</section>
+    <h1>Media Results</h1>
+    <section th:fragment="table(displayResults, caption)" th:remove="tag">
+        <table>
+            <caption th:text="${caption}">Results</caption>
+            <thead>
+                <tr>
+                    <th>Artist</th>
+                    <th>Album</th>
+                    <th>Track</th>
+                    <th>Title</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="music : ${displayResults}">
+                    <td>
+                        <a href="javascript:" th:href="@{/music/artists/{artist}(artist=${music.artist})}"
+                           th:text="${#strings.isEmpty(music.artist)} ? '(Unknown)' : ${music.artist}">
+                            Artist
+                        </a>
+                    </td>
+                    <td>
+                        <a href="javascript:" th:href="@{/music/albums/{album}(album=${music.album})}"
+                           th:text="${#strings.isEmpty(music.album)} ? '(Unknown)' : ${music.album}">
+                            Album
+                        </a>
+                    </td>
+                    <td th:text="${music.trackNumber}">Track</td>
+                    <td>
+                        <a href="javascript:" class="song-link" th:attr="data-song=${music.resource}"
+                           th:text="${music.title}">Title</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
 
-<section th:fragment="list(displayResults, title)" th:remove="tag">
-	<h2 th:text="${title}">List</h2>
-	<ol>
-		<li th:each="result : ${displayResults}">
-            <a href="javascript:" th:href="@{/music/{type}/{name}(type=${title.toLowerCase()},name=${result.value})}"
-               th:text="${#strings.isEmpty(result.key)} ? '(Unknown)' : ${result.key}">
-				Result
-			</a>
-		</li>
-	</ol>
-</section>
+    <section th:fragment="list(displayResults, title)" th:remove="tag">
+        <h2 th:text="${title}">List</h2>
+        <ol>
+            <li th:each="result : ${displayResults}">
+                <a href="javascript:"
+                   th:href="@{/music/{type}/{name}(type=${title.toLowerCase()},name=${result.value})}"
+                   th:text="${#strings.isEmpty(result.key)} ? '(Unknown)' : ${result.key}">
+                    Result
+                </a>
+            </li>
+        </ol>
+    </section>
 </body>
 </html>

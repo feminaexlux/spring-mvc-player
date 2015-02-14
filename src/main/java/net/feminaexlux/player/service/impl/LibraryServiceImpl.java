@@ -5,7 +5,7 @@ import net.feminaexlux.player.model.table.record.MusicRecord;
 import net.feminaexlux.player.model.table.record.NormalizedTextRecord;
 import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.model.type.MediaType;
-import net.feminaexlux.player.service.DirectoryScannerService;
+import net.feminaexlux.player.service.LibraryService;
 import net.feminaexlux.player.util.Normalizer;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FileUtils;
@@ -50,9 +50,9 @@ import static net.feminaexlux.player.model.Table.RESOURCE;
 import static net.feminaexlux.player.model.Table.TYPE_EXTENSION;
 
 @Service
-public class DirectoryScannerServiceImpl implements DirectoryScannerService {
+public class LibraryServiceImpl implements LibraryService {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DirectoryScannerService.class);
+	private static final Logger LOG = LoggerFactory.getLogger(LibraryService.class);
 	private static final int BATCH_AMOUNT = Integer.parseInt(System.getProperty("player.sql.batch", "500"));
 
 	@Autowired

@@ -1,7 +1,8 @@
-package net.feminaexlux.player.model.element;
+package net.feminaexlux.player.model.item;
 
 enum HashCodePrimes {
 
+	DIRECTORY(109, 113),
 	MUSIC(127, 131),
 	KEY_VALUE(137, 139);
 

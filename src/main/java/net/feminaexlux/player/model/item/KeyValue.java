@@ -1,4 +1,4 @@
-package net.feminaexlux.player.model.element;
+package net.feminaexlux.player.model.item;
 
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -8,6 +8,7 @@ import java.io.Serializable;
 
 public class KeyValue<K extends Comparable & Serializable, V extends Serializable> implements Serializable, Comparable<KeyValue<K, V>> {
 
+	private static final long serialVersionUID = -2297539737795938446L;
 	private final K key;
 	private final V value;
 
