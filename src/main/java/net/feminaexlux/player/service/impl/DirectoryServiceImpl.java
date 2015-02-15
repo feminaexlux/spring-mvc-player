@@ -25,16 +25,14 @@ public class DirectoryServiceImpl implements DirectoryService {
 
 	@Override
 	public List<DirectoryRecord> findByType(final MediaType mediaType) {
-		return database.select()
-				.from(DIRECTORY)
+		return database.selectFrom(DIRECTORY)
 				.where(DIRECTORY.TYPE.equalIgnoreCase(mediaType.name()))
 				.fetchInto(DirectoryRecord.class);
 	}
 
 	@Override
 	public List<DirectoryRecord> search(final String query) {
-		return database.select()
-				.from(DIRECTORY)
+		return database.selectFrom(DIRECTORY)
 				.where(DIRECTORY.DIRECTORY_.contains(query))
 				.fetchInto(DirectoryRecord.class);
 	}

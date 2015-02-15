@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return DSL.using(connection, SQLDialect.MYSQL);
 	}
 
-	protected void configure(HttpSecurity http) throws Exception {
+	protected void configure(final HttpSecurity http) throws Exception {
 		http.authorizeRequests()
 				.antMatchers("/js/**").permitAll()
 				.antMatchers("/settings/**").hasRole("ADMIN")

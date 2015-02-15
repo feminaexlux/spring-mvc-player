@@ -59,8 +59,7 @@ public class MusicServiceImpl implements MusicService {
 
 	@Override
 	public List<MusicRecord> findByArtistUrl(final String artist) {
-		return database.select()
-				.from(MUSIC)
+		return database.selectFrom(MUSIC)
 				.where(MUSIC.ARTIST_URL.equal(artist))
 				.fetchInto(MusicRecord.class);
 	}
@@ -75,9 +74,9 @@ public class MusicServiceImpl implements MusicService {
 
 	@Override
 	public List<MusicRecord> findByAlbumUrl(final String album) {
-		return database.select()
-				.from(MUSIC)
+		return database.selectFrom(MUSIC)
 				.where(MUSIC.ALBUM_URL.equal(album))
+				.orderBy(buildOrderBy(MUSIC.ALBUM))
 				.fetchInto(MusicRecord.class);
 	}
 
