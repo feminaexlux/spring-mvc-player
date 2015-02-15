@@ -30,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Type extends TableImpl<TypeRecord> {
 
-	private static final long serialVersionUID = -39207165;
+	private static final long serialVersionUID = 1306740058;
 
 	/**
 	 * The reference instance of <code>media.type</code>
@@ -48,7 +48,7 @@ public class Type extends TableImpl<TypeRecord> {
 	/**
 	 * The column <code>media.type.type</code>.
 	 */
-	public final TableField<TypeRecord, String> TYPE_ = createField("type", SQLDataType.VARCHAR.length(50).nullable(false), this, "");
+	public final TableField<TypeRecord, String> TYPE_ = createField("type", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * Create a <code>media.type</code> table reference

@@ -14,11 +14,11 @@ public interface MusicService {
 
 	Map<String, String> findAllArtists();
 
-	List<MusicRecord> findByArtist(final String artist);
+	List<MusicRecord> findByArtistUrl(final String artist);
 
 	Map<String, String> findAllAlbums();
 
-	List<MusicRecord> findByAlbum(final String album);
+	List<MusicRecord> findByAlbumUrl(final String album);
 
 	MusicResource find(final String checksum);
 

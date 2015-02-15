@@ -24,7 +24,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TypeRecord extends UpdatableRecordImpl<TypeRecord> implements Record1<String> {
 
-	private static final long serialVersionUID = -205170739;
+	private static final long serialVersionUID = -1517243645;
 
 	/**
 	 * Setter for <code>media.type.type</code>.

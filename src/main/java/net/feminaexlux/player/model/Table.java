@@ -4,18 +4,13 @@
 package net.feminaexlux.player.model;
 
 import net.feminaexlux.player.model.table.Directory;
-import net.feminaexlux.player.model.table.Mood;
-import net.feminaexlux.player.model.table.MoodResource;
 import net.feminaexlux.player.model.table.Music;
-import net.feminaexlux.player.model.table.NormalizedText;
-import net.feminaexlux.player.model.table.Playlist;
-import net.feminaexlux.player.model.table.PlaylistEntry;
-import net.feminaexlux.player.model.table.Principal;
-import net.feminaexlux.player.model.table.PrincipalResourceAccess;
-import net.feminaexlux.player.model.table.PrincipalRole;
 import net.feminaexlux.player.model.table.Resource;
 import net.feminaexlux.player.model.table.Type;
 import net.feminaexlux.player.model.table.TypeExtension;
+import net.feminaexlux.player.model.table.User;
+import net.feminaexlux.player.model.table.UserPlayed;
+import net.feminaexlux.player.model.table.UserRole;
 
 import javax.annotation.Generated;
 
@@ -38,49 +33,9 @@ public class Table {
 	public static final Directory DIRECTORY = Directory.DIRECTORY;
 
 	/**
-	 * The table media.mood
-	 */
-	public static final Mood MOOD = Mood.MOOD;
-
-	/**
-	 * The table media.mood_resource
-	 */
-	public static final MoodResource MOOD_RESOURCE = MoodResource.MOOD_RESOURCE;
-
-	/**
 	 * The table media.music
 	 */
 	public static final Music MUSIC = Music.MUSIC;
-
-	/**
-	 * The table media.normalized_text
-	 */
-	public static final NormalizedText NORMALIZED_TEXT = NormalizedText.NORMALIZED_TEXT;
-
-	/**
-	 * The table media.playlist
-	 */
-	public static final Playlist PLAYLIST = Playlist.PLAYLIST;
-
-	/**
-	 * The table media.playlist_entry
-	 */
-	public static final PlaylistEntry PLAYLIST_ENTRY = PlaylistEntry.PLAYLIST_ENTRY;
-
-	/**
-	 * The table media.principal
-	 */
-	public static final Principal PRINCIPAL = Principal.PRINCIPAL;
-
-	/**
-	 * The table media.principal_role
-	 */
-	public static final PrincipalRole PRINCIPAL_ROLE = PrincipalRole.PRINCIPAL_ROLE;
-
-	/**
-	 * The table media.principal_resource_access
-	 */
-	public static final PrincipalResourceAccess PRINCIPAL_RESOURCE_ACCESS = PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS;
 
 	/**
 	 * The table media.resource
@@ -96,4 +51,19 @@ public class Table {
 	 * The table media.type_extension
 	 */
 	public static final TypeExtension TYPE_EXTENSION = TypeExtension.TYPE_EXTENSION;
+
+	/**
+	 * The table media.user
+	 */
+	public static final User USER = User.USER;
+
+	/**
+	 * The table media.user_played
+	 */
+	public static final UserPlayed USER_PLAYED = UserPlayed.USER_PLAYED;
+
+	/**
+	 * The table media.user_role
+	 */
+	public static final UserRole USER_ROLE = UserRole.USER_ROLE;
 }

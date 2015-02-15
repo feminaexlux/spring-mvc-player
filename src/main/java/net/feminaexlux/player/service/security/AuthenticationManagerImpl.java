@@ -2,6 +2,7 @@ package net.feminaexlux.player.service.security;
 
 import net.feminaexlux.player.exception.BadPasswordException;
 import net.feminaexlux.player.exception.MediaPlayerAuthenticationException;
+import net.feminaexlux.player.service.UserLoginService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class AuthenticationManagerImpl implements AuthenticationManager {
@@ -19,18 +19,18 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-
 	@Autowired
-	private UserDetailsService userDetailsService;
+	private UserLoginService userLoginService;
 
 	@Override
 	public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
 		try {
-			UserDetails userDetails = userDetailsService.loadUserByUsername(String.valueOf(authentication.getPrincipal()));
+			UserDetails userDetails = userLoginService.loadUserByUsername(String.valueOf(authentication.getPrincipal()));
 			if (!passwordEncoder.matches(String.valueOf(authentication.getCredentials()), userDetails.getPassword())) {
 				throw new BadPasswordException("Bad password for user " + authentication.getPrincipal());
 			}
 
+			userLoginService.updateLastLogin(userDetails.getUsername());
 			return new UsernamePasswordAuthenticationToken(
 					authentication.getPrincipal(),
 					authentication.getCredentials(),

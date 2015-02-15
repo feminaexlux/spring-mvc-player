@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Music extends TableImpl<MusicRecord> {
 
-	private static final long serialVersionUID = -233104811;
+	private static final long serialVersionUID = -1796180221;
 
 	/**
 	 * The reference instance of <code>media.music</code>
@@ -47,9 +47,9 @@ public class Music extends TableImpl<MusicRecord> {
 	}
 
 	/**
-	 * The column <code>media.music.resource</code>.
+	 * The column <code>media.music.checksum</code>.
 	 */
-	public final TableField<MusicRecord, String> RESOURCE = createField("resource", SQLDataType.VARCHAR.length(40).nullable(false), this, "");
+	public final TableField<MusicRecord, String> CHECKSUM = createField("checksum", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * The column <code>media.music.artist</code>.
@@ -57,14 +57,24 @@ public class Music extends TableImpl<MusicRecord> {
 	public final TableField<MusicRecord, String> ARTIST = createField("artist", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
+	 * The column <code>media.music.artist_url</code>.
+	 */
+	public final TableField<MusicRecord, String> ARTIST_URL = createField("artist_url", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+
+	/**
 	 * The column <code>media.music.album</code>.
 	 */
 	public final TableField<MusicRecord, String> ALBUM = createField("album", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.music.track</code>.
+	 * The column <code>media.music.album_url</code>.
 	 */
-	public final TableField<MusicRecord, Integer> TRACK = createField("track", SQLDataType.INTEGER, this, "");
+	public final TableField<MusicRecord, String> ALBUM_URL = createField("album_url", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+
+	/**
+	 * The column <code>media.music.track_number</code>.
+	 */
+	public final TableField<MusicRecord, Byte> TRACK_NUMBER = createField("track_number", SQLDataType.TINYINT.nullable(false), this, "");
 
 	/**
 	 * The column <code>media.music.title</code>.
@@ -72,14 +82,14 @@ public class Music extends TableImpl<MusicRecord> {
 	public final TableField<MusicRecord, String> TITLE = createField("title", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
+	 * The column <code>media.music.year</code>.
+	 */
+	public final TableField<MusicRecord, Short> YEAR = createField("year", SQLDataType.SMALLINT, this, "");
+
+	/**
 	 * The column <code>media.music.genre</code>.
 	 */
 	public final TableField<MusicRecord, String> GENRE = createField("genre", SQLDataType.VARCHAR.length(255), this, "");
-
-	/**
-	 * The column <code>media.music.rating</code>.
-	 */
-	public final TableField<MusicRecord, Byte> RATING = createField("rating", SQLDataType.TINYINT.nullable(false).defaulted(true), this, "");
 
 	/**
 	 * Create a <code>media.music</code> table reference

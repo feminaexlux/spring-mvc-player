@@ -1,7 +1,6 @@
 package net.feminaexlux.player.service.impl;
 
 import net.feminaexlux.player.model.container.MusicResource;
-import net.feminaexlux.player.model.table.NormalizedText;
 import net.feminaexlux.player.model.table.record.MusicRecord;
 import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.service.MusicService;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import static net.feminaexlux.player.model.Table.MUSIC;
-import static net.feminaexlux.player.model.Table.NORMALIZED_TEXT;
 import static net.feminaexlux.player.model.Table.RESOURCE;
 
 @Service
@@ -28,26 +26,15 @@ public class MusicServiceImpl implements MusicService {
 
 	@Override
 	public List<MusicRecord> search(final String query) {
-		NormalizedText artistText = NORMALIZED_TEXT.as("artistText");
-		NormalizedText albumText = NORMALIZED_TEXT.as("albumText");
-		NormalizedText titleText = NORMALIZED_TEXT.as("titleText");
-		NormalizedText genreText = NORMALIZED_TEXT.as("genreText");
-
 		return database.selectDistinct(MUSIC.fields()).from(RESOURCE)
-				.join(MUSIC).on(MUSIC.RESOURCE.eq(RESOURCE.CHECKSUM))
-				.join(artistText).on(MUSIC.ARTIST.equal(artistText.ORIGINAL))
-				.join(albumText).on(MUSIC.ARTIST.equal(albumText.ORIGINAL))
-				.join(titleText).on(MUSIC.ARTIST.equal(titleText.ORIGINAL))
-				.join(genreText).on(MUSIC.ARTIST.equal(genreText.ORIGINAL))
-				.where(RESOURCE.NAME.contains(query))
+				.join(MUSIC).on(MUSIC.CHECKSUM.eq(RESOURCE.CHECKSUM))
+				.where(RESOURCE.PATH.contains(query))
 				.or(MUSIC.TITLE.contains(query))
 				.or(MUSIC.ARTIST.contains(query))
+				.or(MUSIC.ARTIST_URL.contains(query))
 				.or(MUSIC.ALBUM.contains(query))
+				.or(MUSIC.ALBUM_URL.contains(query))
 				.or(MUSIC.GENRE.contains(query))
-				.or(artistText.ORIGINAL.contains(query))
-				.or(albumText.ORIGINAL.contains(query))
-				.or(titleText.ORIGINAL.contains(query))
-				.or(genreText.ORIGINAL.contains(query))
 				.orderBy(MUSIC.ARTIST, MUSIC.ALBUM, MUSIC.TITLE)
 				.fetchInto(MusicRecord.class);
 	}
@@ -55,47 +42,42 @@ public class MusicServiceImpl implements MusicService {
 	@Override
 	public List<MusicRecord> recentlyPlayed(final int max) {
 		return database.select(MUSIC.fields()).from(RESOURCE)
-				.join(MUSIC).on(MUSIC.RESOURCE.eq(RESOURCE.CHECKSUM))
-				.where(RESOURCE.LASTACCESSED.isNotNull())
-				.orderBy(RESOURCE.LASTACCESSED.desc())
+				.join(MUSIC).on(MUSIC.CHECKSUM.eq(RESOURCE.CHECKSUM))
+				.where(RESOURCE.LAST_UPDATED.isNotNull())
+				.orderBy(RESOURCE.LAST_UPDATED.desc())
 				.limit(max)
 				.fetchInto(MusicRecord.class);
 	}
 
 	@Override
 	public Map<String, String> findAllArtists() {
-		return findAllBy(MUSIC.ARTIST);
+		return database.select(MUSIC.ARTIST, MUSIC.ARTIST_URL)
+				.from(MUSIC)
+				.orderBy(MUSIC.ARTIST)
+				.fetchMap(MUSIC.ARTIST, MUSIC.ARTIST_URL);
 	}
 
 	@Override
-	public List<MusicRecord> findByArtist(final String artist) {
-		return findBy(MUSIC.ARTIST, artist);
+	public List<MusicRecord> findByArtistUrl(final String artist) {
+		return database.select()
+				.from(MUSIC)
+				.where(MUSIC.ARTIST_URL.equal(artist))
+				.fetchInto(MusicRecord.class);
 	}
 
 	@Override
 	public Map<String, String> findAllAlbums() {
-		return findAllBy(MUSIC.ALBUM);
+		return database.select(MUSIC.ALBUM, MUSIC.ALBUM_URL)
+				.from(MUSIC)
+				.orderBy(MUSIC.ALBUM)
+				.fetchMap(MUSIC.ALBUM, MUSIC.ALBUM_URL);
 	}
 
 	@Override
-	public List<MusicRecord> findByAlbum(final String album) {
-		return findBy(MUSIC.ALBUM, album);
-	}
-
-	private Map<String, String> findAllBy(final TableField<MusicRecord, String> field) {
-		return database.selectDistinct(field, NORMALIZED_TEXT.NORMALIZED)
+	public List<MusicRecord> findByAlbumUrl(final String album) {
+		return database.select()
 				.from(MUSIC)
-				.leftOuterJoin(NORMALIZED_TEXT).on(NORMALIZED_TEXT.ORIGINAL.equal(field))
-				.orderBy(buildOrderBy(field))
-				.fetchMap(field, NORMALIZED_TEXT.NORMALIZED);
-	}
-
-	private List<MusicRecord> findBy(final TableField<MusicRecord, String> field, final String term) {
-		return database.select(MUSIC.fields()).from(MUSIC)
-				.leftOuterJoin(NORMALIZED_TEXT).on(NORMALIZED_TEXT.ORIGINAL.equal(field))
-				.where(field.equal(term))
-				.or(NORMALIZED_TEXT.NORMALIZED.equal(term))
-				.orderBy(buildOrderBy(field))
+				.where(MUSIC.ALBUM_URL.equal(album))
 				.fetchInto(MusicRecord.class);
 	}
 
@@ -107,7 +89,7 @@ public class MusicServiceImpl implements MusicService {
 		}
 
 		orderBy.add(MUSIC.ALBUM);
-		orderBy.add(MUSIC.TRACK);
+		orderBy.add(MUSIC.TRACK_NUMBER);
 		orderBy.add(MUSIC.TITLE);
 
 		return orderBy.toArray(new Field[0]);
@@ -115,14 +97,14 @@ public class MusicServiceImpl implements MusicService {
 
 	@Override
 	public MusicResource find(final String checksum) {
-		MusicRecord musicRecord = database.fetchOne(MUSIC, MUSIC.RESOURCE.equal(checksum));
+		MusicRecord musicRecord = database.fetchOne(MUSIC, MUSIC.CHECKSUM.equal(checksum));
 		ResourceRecord resourceRecord = database.fetchOne(RESOURCE, RESOURCE.CHECKSUM.equal(checksum));
 		return new MusicResource(musicRecord, resourceRecord);
 	}
 
 	@Override
 	public List<MusicResource> findAll() {
-		Map<String, MusicRecord> music = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE, MusicRecord.class);
+		Map<String, MusicRecord> music = database.fetch(MUSIC).intoMap(MUSIC.CHECKSUM, MusicRecord.class);
 		Map<String, ResourceRecord> resources = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM, ResourceRecord.class);
 
 		List<MusicResource> musicResources = new ArrayList<>();
@@ -137,7 +119,7 @@ public class MusicServiceImpl implements MusicService {
 	@Override
 	public void setPlayed(final String checksum) {
 		ResourceRecord resourceRecord = database.fetchOne(RESOURCE, RESOURCE.CHECKSUM.equal(checksum));
-		resourceRecord.setLastaccessed(new Timestamp(System.currentTimeMillis()));
+		resourceRecord.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 		database.executeUpdate(resourceRecord);
 	}
 

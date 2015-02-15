@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class TypeExtension extends TableImpl<TypeExtensionRecord> {
 
-	private static final long serialVersionUID = 1948384845;
+	private static final long serialVersionUID = 680082719;
 
 	/**
 	 * The reference instance of <code>media.type_extension</code>
@@ -49,12 +49,12 @@ public class TypeExtension extends TableImpl<TypeExtensionRecord> {
 	/**
 	 * The column <code>media.type_extension.type</code>.
 	 */
-	public final TableField<TypeExtensionRecord, String> TYPE = createField("type", SQLDataType.VARCHAR.length(50).nullable(false), this, "");
+	public final TableField<TypeExtensionRecord, String> TYPE = createField("type", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * The column <code>media.type_extension.extension</code>.
 	 */
-	public final TableField<TypeExtensionRecord, String> EXTENSION = createField("extension", SQLDataType.VARCHAR.length(50).nullable(false), this, "");
+	public final TableField<TypeExtensionRecord, String> EXTENSION = createField("extension", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * Create a <code>media.type_extension</code> table reference

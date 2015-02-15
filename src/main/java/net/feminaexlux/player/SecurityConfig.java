@@ -1,8 +1,9 @@
 package net.feminaexlux.player;
 
 import com.mysql.jdbc.Driver;
+import net.feminaexlux.player.service.UserLoginService;
 import net.feminaexlux.player.service.security.AuthenticationManagerImpl;
-import net.feminaexlux.player.service.security.UserDetailsServiceImpl;
+import net.feminaexlux.player.service.security.UserLoginServiceImpl;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -12,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -54,8 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public UserDetailsService userDetailsService() {
-		return new UserDetailsServiceImpl();
+	public UserLoginService userLoginService() {
+		return new UserLoginServiceImpl();
 	}
 
 }

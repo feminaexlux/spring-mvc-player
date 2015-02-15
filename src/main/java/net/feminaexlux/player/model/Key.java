@@ -4,31 +4,21 @@
 package net.feminaexlux.player.model;
 
 import net.feminaexlux.player.model.table.Directory;
-import net.feminaexlux.player.model.table.Mood;
-import net.feminaexlux.player.model.table.MoodResource;
 import net.feminaexlux.player.model.table.Music;
-import net.feminaexlux.player.model.table.NormalizedText;
-import net.feminaexlux.player.model.table.Playlist;
-import net.feminaexlux.player.model.table.PlaylistEntry;
-import net.feminaexlux.player.model.table.Principal;
-import net.feminaexlux.player.model.table.PrincipalResourceAccess;
-import net.feminaexlux.player.model.table.PrincipalRole;
 import net.feminaexlux.player.model.table.Resource;
 import net.feminaexlux.player.model.table.Type;
 import net.feminaexlux.player.model.table.TypeExtension;
+import net.feminaexlux.player.model.table.User;
+import net.feminaexlux.player.model.table.UserPlayed;
+import net.feminaexlux.player.model.table.UserRole;
 import net.feminaexlux.player.model.table.record.DirectoryRecord;
-import net.feminaexlux.player.model.table.record.MoodRecord;
-import net.feminaexlux.player.model.table.record.MoodResourceRecord;
 import net.feminaexlux.player.model.table.record.MusicRecord;
-import net.feminaexlux.player.model.table.record.NormalizedTextRecord;
-import net.feminaexlux.player.model.table.record.PlaylistEntryRecord;
-import net.feminaexlux.player.model.table.record.PlaylistRecord;
-import net.feminaexlux.player.model.table.record.PrincipalRecord;
-import net.feminaexlux.player.model.table.record.PrincipalResourceAccessRecord;
-import net.feminaexlux.player.model.table.record.PrincipalRoleRecord;
 import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.model.table.record.TypeExtensionRecord;
 import net.feminaexlux.player.model.table.record.TypeRecord;
+import net.feminaexlux.player.model.table.record.UserPlayedRecord;
+import net.feminaexlux.player.model.table.record.UserRecord;
+import net.feminaexlux.player.model.table.record.UserRoleRecord;
 import org.jooq.ForeignKey;
 import org.jooq.UniqueKey;
 import org.jooq.impl.AbstractKeys;
@@ -59,35 +49,26 @@ public class Key {
 	// -------------------------------------------------------------------------
 
 	public static final UniqueKey<DirectoryRecord> KEY_DIRECTORY_PRIMARY = UniqueKeys0.KEY_DIRECTORY_PRIMARY;
-	public static final UniqueKey<MoodRecord> KEY_MOOD_PRIMARY = UniqueKeys0.KEY_MOOD_PRIMARY;
-	public static final UniqueKey<MoodResourceRecord> KEY_MOOD_RESOURCE_PRIMARY = UniqueKeys0.KEY_MOOD_RESOURCE_PRIMARY;
 	public static final UniqueKey<MusicRecord> KEY_MUSIC_PRIMARY = UniqueKeys0.KEY_MUSIC_PRIMARY;
-	public static final UniqueKey<NormalizedTextRecord> KEY_NORMALIZED_TEXT_PRIMARY = UniqueKeys0.KEY_NORMALIZED_TEXT_PRIMARY;
-	public static final UniqueKey<PlaylistRecord> KEY_PLAYLIST_PRIMARY = UniqueKeys0.KEY_PLAYLIST_PRIMARY;
-	public static final UniqueKey<PlaylistEntryRecord> KEY_PLAYLIST_ENTRY_PRIMARY = UniqueKeys0.KEY_PLAYLIST_ENTRY_PRIMARY;
-	public static final UniqueKey<PrincipalRecord> KEY_PRINCIPAL_PRIMARY = UniqueKeys0.KEY_PRINCIPAL_PRIMARY;
-	public static final UniqueKey<PrincipalResourceAccessRecord> KEY_PRINCIPAL_RESOURCE_ACCESS_PRIMARY = UniqueKeys0.KEY_PRINCIPAL_RESOURCE_ACCESS_PRIMARY;
-	public static final UniqueKey<PrincipalRoleRecord> KEY_PRINCIPAL_ROLE_PRIMARY = UniqueKeys0.KEY_PRINCIPAL_ROLE_PRIMARY;
 	public static final UniqueKey<ResourceRecord> KEY_RESOURCE_PRIMARY = UniqueKeys0.KEY_RESOURCE_PRIMARY;
 	public static final UniqueKey<TypeRecord> KEY_TYPE_PRIMARY = UniqueKeys0.KEY_TYPE_PRIMARY;
 	public static final UniqueKey<TypeExtensionRecord> KEY_TYPE_EXTENSION_PRIMARY = UniqueKeys0.KEY_TYPE_EXTENSION_PRIMARY;
+	public static final UniqueKey<UserRecord> KEY_USER_PRIMARY = UniqueKeys0.KEY_USER_PRIMARY;
+	public static final UniqueKey<UserPlayedRecord> KEY_USER_PLAYED_PRIMARY = UniqueKeys0.KEY_USER_PLAYED_PRIMARY;
+	public static final UniqueKey<UserRoleRecord> KEY_USER_ROLE_PRIMARY = UniqueKeys0.KEY_USER_ROLE_PRIMARY;
 
 	// -------------------------------------------------------------------------
 	// FOREIGN KEY definitions
 	// -------------------------------------------------------------------------
 
-	public static final ForeignKey<DirectoryRecord, TypeRecord> FK1_DIRECTORY_TYPE = ForeignKeys0.FK1_DIRECTORY_TYPE;
-	public static final ForeignKey<MoodRecord, PrincipalRecord> FK1_MOOD_PRINCIPAL = ForeignKeys0.FK1_MOOD_PRINCIPAL;
-	public static final ForeignKey<MoodResourceRecord, MoodRecord> FK1_MOOD_RESOURCE_MOOD = ForeignKeys0.FK1_MOOD_RESOURCE_MOOD;
-	public static final ForeignKey<MoodResourceRecord, ResourceRecord> FK2_MOOD_RESOURCE_RESOURCE = ForeignKeys0.FK2_MOOD_RESOURCE_RESOURCE;
 	public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = ForeignKeys0.FK1_MUSIC_RESOURCE;
-	public static final ForeignKey<PlaylistRecord, PrincipalRecord> FK1_PLAYLIST_PRINCIPAL = ForeignKeys0.FK1_PLAYLIST_PRINCIPAL;
-	public static final ForeignKey<PlaylistEntryRecord, PlaylistRecord> FK1_PLAYLIST_ENTRY_PLAYLIST = ForeignKeys0.FK1_PLAYLIST_ENTRY_PLAYLIST;
-	public static final ForeignKey<PrincipalResourceAccessRecord, PrincipalRecord> FK1_PRINCIPAL_RESOURCE_ACCESS_PRINCIPAL = ForeignKeys0.FK1_PRINCIPAL_RESOURCE_ACCESS_PRINCIPAL;
-	public static final ForeignKey<PrincipalResourceAccessRecord, ResourceRecord> FK2_PRINCIPAL_RESOURCE_ACCESS_RESOURCE = ForeignKeys0.FK2_PRINCIPAL_RESOURCE_ACCESS_RESOURCE;
-	public static final ForeignKey<PrincipalRoleRecord, PrincipalRecord> FK1_PRINCIPAL_ROLE_PRINCIPAL = ForeignKeys0.FK1_PRINCIPAL_ROLE_PRINCIPAL;
-	public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY = ForeignKeys0.FK1_RESOURCE_DIRECTORY;
+	public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY_DIRECTORY = ForeignKeys0.FK1_RESOURCE_DIRECTORY_DIRECTORY;
+	public static final ForeignKey<ResourceRecord, TypeRecord> FK2_RESOURCE_DIRECTORY_TYPE = ForeignKeys0.FK2_RESOURCE_DIRECTORY_TYPE;
+	public static final ForeignKey<ResourceRecord, TypeRecord> FK3_RESOURCE_TYPE_TYPE = ForeignKeys0.FK3_RESOURCE_TYPE_TYPE;
 	public static final ForeignKey<TypeExtensionRecord, TypeRecord> FK1_TYPE_EXTENSION_TYPE = ForeignKeys0.FK1_TYPE_EXTENSION_TYPE;
+	public static final ForeignKey<UserPlayedRecord, UserRecord> FK1_USER_PLAYED_USER = ForeignKeys0.FK1_USER_PLAYED_USER;
+	public static final ForeignKey<UserPlayedRecord, ResourceRecord> FK2_USER_PLAYED_RESOURCE = ForeignKeys0.FK2_USER_PLAYED_RESOURCE;
+	public static final ForeignKey<UserRoleRecord, UserRecord> FK1_USER_ROLE_USER = ForeignKeys0.FK1_USER_ROLE_USER;
 
 	// -------------------------------------------------------------------------
 	// [#1459] distribute members to avoid static initialisers > 64kb
@@ -95,34 +76,25 @@ public class Key {
 
 	private static class UniqueKeys0 extends AbstractKeys {
 
-		public static final UniqueKey<DirectoryRecord> KEY_DIRECTORY_PRIMARY = createUniqueKey(Directory.DIRECTORY, Directory.DIRECTORY.LOCATION);
-		public static final UniqueKey<MoodRecord> KEY_MOOD_PRIMARY = createUniqueKey(Mood.MOOD, Mood.MOOD.NAME, Mood.MOOD.USER);
-		public static final UniqueKey<MoodResourceRecord> KEY_MOOD_RESOURCE_PRIMARY = createUniqueKey(MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.MOOD, MoodResource.MOOD_RESOURCE.RESOURCE, MoodResource.MOOD_RESOURCE.USER);
-		public static final UniqueKey<MusicRecord> KEY_MUSIC_PRIMARY = createUniqueKey(Music.MUSIC, Music.MUSIC.RESOURCE);
-		public static final UniqueKey<NormalizedTextRecord> KEY_NORMALIZED_TEXT_PRIMARY = createUniqueKey(NormalizedText.NORMALIZED_TEXT, NormalizedText.NORMALIZED_TEXT.ORIGINAL);
-		public static final UniqueKey<PlaylistRecord> KEY_PLAYLIST_PRIMARY = createUniqueKey(Playlist.PLAYLIST, Playlist.PLAYLIST.NAME, Playlist.PLAYLIST.USER);
-		public static final UniqueKey<PlaylistEntryRecord> KEY_PLAYLIST_ENTRY_PRIMARY = createUniqueKey(PlaylistEntry.PLAYLIST_ENTRY, PlaylistEntry.PLAYLIST_ENTRY.PLAYLIST, PlaylistEntry.PLAYLIST_ENTRY.ORDER, PlaylistEntry.PLAYLIST_ENTRY.USER);
-		public static final UniqueKey<PrincipalRecord> KEY_PRINCIPAL_PRIMARY = createUniqueKey(Principal.PRINCIPAL, Principal.PRINCIPAL.USERNAME);
-		public static final UniqueKey<PrincipalResourceAccessRecord> KEY_PRINCIPAL_RESOURCE_ACCESS_PRIMARY = createUniqueKey(PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS, PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS.USER, PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS.RESOURCE);
-		public static final UniqueKey<PrincipalRoleRecord> KEY_PRINCIPAL_ROLE_PRIMARY = createUniqueKey(PrincipalRole.PRINCIPAL_ROLE, PrincipalRole.PRINCIPAL_ROLE.USERNAME, PrincipalRole.PRINCIPAL_ROLE.ROLE);
+		public static final UniqueKey<DirectoryRecord> KEY_DIRECTORY_PRIMARY = createUniqueKey(Directory.DIRECTORY, Directory.DIRECTORY.DIRECTORY_, Directory.DIRECTORY.TYPE);
+		public static final UniqueKey<MusicRecord> KEY_MUSIC_PRIMARY = createUniqueKey(Music.MUSIC, Music.MUSIC.CHECKSUM);
 		public static final UniqueKey<ResourceRecord> KEY_RESOURCE_PRIMARY = createUniqueKey(Resource.RESOURCE, Resource.RESOURCE.CHECKSUM);
 		public static final UniqueKey<TypeRecord> KEY_TYPE_PRIMARY = createUniqueKey(Type.TYPE, Type.TYPE.TYPE_);
 		public static final UniqueKey<TypeExtensionRecord> KEY_TYPE_EXTENSION_PRIMARY = createUniqueKey(TypeExtension.TYPE_EXTENSION, TypeExtension.TYPE_EXTENSION.TYPE, TypeExtension.TYPE_EXTENSION.EXTENSION);
+		public static final UniqueKey<UserRecord> KEY_USER_PRIMARY = createUniqueKey(User.USER, User.USER.USERNAME);
+		public static final UniqueKey<UserPlayedRecord> KEY_USER_PLAYED_PRIMARY = createUniqueKey(UserPlayed.USER_PLAYED, UserPlayed.USER_PLAYED.USERNAME, UserPlayed.USER_PLAYED.RESOURCE);
+		public static final UniqueKey<UserRoleRecord> KEY_USER_ROLE_PRIMARY = createUniqueKey(UserRole.USER_ROLE, UserRole.USER_ROLE.USERNAME, UserRole.USER_ROLE.ROLE);
 	}
 
 	private static class ForeignKeys0 extends AbstractKeys {
 
-		public static final ForeignKey<DirectoryRecord, TypeRecord> FK1_DIRECTORY_TYPE = createForeignKey(Key.KEY_TYPE_PRIMARY, Directory.DIRECTORY, Directory.DIRECTORY.TYPE);
-		public static final ForeignKey<MoodRecord, PrincipalRecord> FK1_MOOD_PRINCIPAL = createForeignKey(Key.KEY_PRINCIPAL_PRIMARY, Mood.MOOD, Mood.MOOD.USER);
-		public static final ForeignKey<MoodResourceRecord, MoodRecord> FK1_MOOD_RESOURCE_MOOD = createForeignKey(Key.KEY_MOOD_PRIMARY, MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.MOOD, MoodResource.MOOD_RESOURCE.USER);
-		public static final ForeignKey<MoodResourceRecord, ResourceRecord> FK2_MOOD_RESOURCE_RESOURCE = createForeignKey(Key.KEY_RESOURCE_PRIMARY, MoodResource.MOOD_RESOURCE, MoodResource.MOOD_RESOURCE.RESOURCE);
-		public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = createForeignKey(Key.KEY_RESOURCE_PRIMARY, Music.MUSIC, Music.MUSIC.RESOURCE);
-		public static final ForeignKey<PlaylistRecord, PrincipalRecord> FK1_PLAYLIST_PRINCIPAL = createForeignKey(Key.KEY_PRINCIPAL_PRIMARY, Playlist.PLAYLIST, Playlist.PLAYLIST.USER);
-		public static final ForeignKey<PlaylistEntryRecord, PlaylistRecord> FK1_PLAYLIST_ENTRY_PLAYLIST = createForeignKey(Key.KEY_PLAYLIST_PRIMARY, PlaylistEntry.PLAYLIST_ENTRY, PlaylistEntry.PLAYLIST_ENTRY.PLAYLIST, PlaylistEntry.PLAYLIST_ENTRY.USER);
-		public static final ForeignKey<PrincipalResourceAccessRecord, PrincipalRecord> FK1_PRINCIPAL_RESOURCE_ACCESS_PRINCIPAL = createForeignKey(Key.KEY_PRINCIPAL_PRIMARY, PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS, PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS.USER);
-		public static final ForeignKey<PrincipalResourceAccessRecord, ResourceRecord> FK2_PRINCIPAL_RESOURCE_ACCESS_RESOURCE = createForeignKey(Key.KEY_RESOURCE_PRIMARY, PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS, PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS.RESOURCE);
-		public static final ForeignKey<PrincipalRoleRecord, PrincipalRecord> FK1_PRINCIPAL_ROLE_PRINCIPAL = createForeignKey(Key.KEY_PRINCIPAL_PRIMARY, PrincipalRole.PRINCIPAL_ROLE, PrincipalRole.PRINCIPAL_ROLE.USERNAME);
-		public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY = createForeignKey(Key.KEY_DIRECTORY_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.DIRECTORY);
+		public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = createForeignKey(Key.KEY_RESOURCE_PRIMARY, Music.MUSIC, Music.MUSIC.CHECKSUM);
+		public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY_DIRECTORY = createForeignKey(Key.KEY_DIRECTORY_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.DIRECTORY);
+		public static final ForeignKey<ResourceRecord, TypeRecord> FK2_RESOURCE_DIRECTORY_TYPE = createForeignKey(Key.KEY_TYPE_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.TYPE);
+		public static final ForeignKey<ResourceRecord, TypeRecord> FK3_RESOURCE_TYPE_TYPE = createForeignKey(Key.KEY_TYPE_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.TYPE);
 		public static final ForeignKey<TypeExtensionRecord, TypeRecord> FK1_TYPE_EXTENSION_TYPE = createForeignKey(Key.KEY_TYPE_PRIMARY, TypeExtension.TYPE_EXTENSION, TypeExtension.TYPE_EXTENSION.TYPE);
+		public static final ForeignKey<UserPlayedRecord, UserRecord> FK1_USER_PLAYED_USER = createForeignKey(Key.KEY_USER_PRIMARY, UserPlayed.USER_PLAYED, UserPlayed.USER_PLAYED.USERNAME);
+		public static final ForeignKey<UserPlayedRecord, ResourceRecord> FK2_USER_PLAYED_RESOURCE = createForeignKey(Key.KEY_RESOURCE_PRIMARY, UserPlayed.USER_PLAYED, UserPlayed.USER_PLAYED.RESOURCE);
+		public static final ForeignKey<UserRoleRecord, UserRecord> FK1_USER_ROLE_USER = createForeignKey(Key.KEY_USER_PRIMARY, UserRole.USER_ROLE, UserRole.USER_ROLE.USERNAME);
 	}
 }

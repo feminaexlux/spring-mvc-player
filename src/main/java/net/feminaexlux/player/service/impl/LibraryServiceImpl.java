@@ -2,7 +2,6 @@ package net.feminaexlux.player.service.impl;
 
 import net.feminaexlux.player.model.table.record.DirectoryRecord;
 import net.feminaexlux.player.model.table.record.MusicRecord;
-import net.feminaexlux.player.model.table.record.NormalizedTextRecord;
 import net.feminaexlux.player.model.table.record.ResourceRecord;
 import net.feminaexlux.player.model.type.MediaType;
 import net.feminaexlux.player.service.LibraryService;
@@ -42,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static net.feminaexlux.player.model.Table.DIRECTORY;
 import static net.feminaexlux.player.model.Table.MUSIC;
@@ -66,10 +64,10 @@ public class LibraryServiceImpl implements LibraryService {
 	@Override
 	public void buildLibrary(final String directory, final MediaType type) throws IOException {
 		Timestamp now = new Timestamp(System.currentTimeMillis());
-		database.insertInto(DIRECTORY, DIRECTORY.LOCATION, DIRECTORY.TYPE, DIRECTORY.LASTSCANNED)
+		database.insertInto(DIRECTORY, DIRECTORY.DIRECTORY_, DIRECTORY.TYPE, DIRECTORY.LAST_SCANNED)
 				.values(directory, type.name(), now)
 				.onDuplicateKeyUpdate()
-				.set(DIRECTORY.LASTSCANNED, now)
+				.set(DIRECTORY.LAST_SCANNED, now)
 				.execute();
 
 		LibraryWalker walker = new LibraryWalker(directory, type);
@@ -77,14 +75,13 @@ public class LibraryServiceImpl implements LibraryService {
 
 		database.batchStore(modifiedResources).execute();
 		database.batchStore(modifiedMusic).execute();
-		addNormalizedText();
 	}
 
 	@Override
 	public void clearLibrary(final String directory, final MediaType type) {
 		List<MusicRecord> affectedMusic = database
 				.select(MUSIC.fields()).from(MUSIC)
-				.join(RESOURCE).on(MUSIC.RESOURCE.equal(RESOURCE.CHECKSUM))
+				.join(RESOURCE).on(MUSIC.CHECKSUM.equal(RESOURCE.CHECKSUM))
 				.where(RESOURCE.DIRECTORY.equal(directory))
 				.fetchInto(MusicRecord.class);
 		database.batchDelete(affectedMusic);
@@ -94,15 +91,8 @@ public class LibraryServiceImpl implements LibraryService {
 	public void updateAllLibraries() throws IOException {
 		List<DirectoryRecord> directories = database.fetch(DIRECTORY);
 		for (DirectoryRecord directoryRecord : directories) {
-			buildLibrary(directoryRecord.getLocation(), MediaType.find(directoryRecord.getType()));
+			buildLibrary(directoryRecord.getDirectory(), MediaType.find(directoryRecord.getType()));
 		}
-	}
-
-	private void addNormalizedText() {
-		List<NormalizedTextRecord> normalizedText = textForNormalizing.stream()
-				.map(text -> new NormalizedTextRecord(text, Normalizer.normalizeForUrl(text)))
-				.collect(Collectors.toList());
-		database.batchStore(normalizedText);
 	}
 
 	protected class LibraryWalker extends SimpleFileVisitor<Path> {
@@ -130,11 +120,11 @@ public class LibraryServiceImpl implements LibraryService {
 		}
 
 		private void initializeMaps() {
-			checksumToMusic = database.fetch(MUSIC).intoMap(MUSIC.RESOURCE);
+			checksumToMusic = database.fetch(MUSIC).intoMap(MUSIC.CHECKSUM);
 			checksumToResource = database.fetch(RESOURCE).intoMap(RESOURCE.CHECKSUM);
 			for (MusicRecord musicRecord : checksumToMusic.values()) {
-				ResourceRecord resourceRecord = checksumToResource.get(musicRecord.getResource());
-				String filePath = resourceRecord.getDirectory() + resourceRecord.getName();
+				ResourceRecord resourceRecord = checksumToResource.get(musicRecord.getChecksum());
+				String filePath = resourceRecord.getDirectory() + resourceRecord.getPath();
 				pathToMusicRecord.put(filePath, musicRecord);
 			}
 		}
@@ -142,17 +132,19 @@ public class LibraryServiceImpl implements LibraryService {
 		@Override
 		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attributes) throws IOException {
 			if (attributes.isRegularFile() && isRightMediaType(file)) {
+				LOG.trace("Filename is {}", file);
+
 				try {
 					String hash = hash(file);
 
-					ResourceRecord resource = checksumToResource.get(hash);
-					if (resource.getUpdated() != null && resource.getUpdated().getTime() < file.toFile().lastModified()) {
+					ResourceRecord resource = getNewOrExistingResource(hash);
+					if (resource.getLastUpdated() != null && resource.getLastUpdated().getTime() < file.toFile().lastModified()) {
 						return FileVisitResult.CONTINUE;
 					}
 
 					updateResourceProperties(file, hash);
 					updateMusicProperties(file, hash);
-				} catch (CannotReadException | TagException | ReadOnlyFileException | InvalidAudioFrameException | NoSuchAlgorithmException e) {
+				} catch (Exception e) {
 					LOG.error("Exception insert/updating media file {}\n{}", file, e);
 				}
 			}
@@ -169,7 +161,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		private String hash(final Path file) throws NoSuchAlgorithmException, IOException {
 			if (pathToMusicRecord.containsKey(file.toString())) {
-				return pathToMusicRecord.get(file.toString()).getResource();
+				return pathToMusicRecord.get(file.toString()).getChecksum();
 			}
 
 			MessageDigest digest = MessageDigest.getInstance("SHA-1");
@@ -182,8 +174,8 @@ public class LibraryServiceImpl implements LibraryService {
 			ResourceRecord resourceRecord = getNewOrExistingResource(hash);
 			resourceRecord.setChecksum(hash);
 			resourceRecord.setDirectory(directory);
-			resourceRecord.setName(file.toString().substring(directory.length()));
-			resourceRecord.setUpdated(new Timestamp(System.currentTimeMillis()));
+			resourceRecord.setPath(file.toString().substring(directory.length()));
+			resourceRecord.setLastUpdated(new Timestamp(System.currentTimeMillis()));
 			modifiedResources.add(resourceRecord);
 			flushResourceRecordBatch();
 		}
@@ -217,8 +209,10 @@ public class LibraryServiceImpl implements LibraryService {
 
 				MusicRecord musicRecord = getNewOrExistingMusic(hash);
 				musicRecord.setArtist(artist);
+				musicRecord.setArtistUrl(Normalizer.normalizeForUrl(artist));
 				musicRecord.setAlbum(album);
-				musicRecord.setTrack(trackNumber);
+				musicRecord.setAlbumUrl(Normalizer.normalizeForUrl(album));
+				musicRecord.setTrackNumber(trackNumber.byteValue());
 				musicRecord.setTitle(title);
 				musicRecord.setGenre(genre);
 
@@ -232,7 +226,7 @@ public class LibraryServiceImpl implements LibraryService {
 			MusicRecord musicRecord = checksumToMusic.get(hash);
 			if (musicRecord == null) {
 				musicRecord = new MusicRecord();
-				musicRecord.setResource(hash);
+				musicRecord.setChecksum(hash);
 				checksumToMusic.put(hash, musicRecord);
 			}
 
@@ -272,7 +266,7 @@ public class LibraryServiceImpl implements LibraryService {
 			}
 
 			if (checksumToResource.containsKey(hash)) {
-				return checksumToResource.get(hash).getName();
+				return checksumToResource.get(hash).getPath();
 			}
 
 			return UNKNOWN;

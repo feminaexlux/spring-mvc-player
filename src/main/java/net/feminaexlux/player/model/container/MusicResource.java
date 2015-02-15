@@ -22,6 +22,6 @@ public class MusicResource {
 	}
 
 	public String getFullFilePath() {
-		return resourceRecord.getDirectory() + resourceRecord.getName();
+		return resourceRecord.getDirectory() + resourceRecord.getPath();
 	}
 }

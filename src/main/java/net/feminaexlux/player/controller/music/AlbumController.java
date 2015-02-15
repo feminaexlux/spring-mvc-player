@@ -25,7 +25,7 @@ public class AlbumController extends AbstractMusicController {
 
 	@RequestMapping(value = "/{album}", method = RequestMethod.GET)
 	public String list(@PathVariable final String album, final Model model) {
-		List<MusicRecord> albumMusic = musicService.findByAlbum(album);
+		List<MusicRecord> albumMusic = musicService.findByAlbumUrl(album);
 		model.addAttribute("album", CollectionUtils.isNotEmpty(albumMusic) ? albumMusic.get(0).getAlbum() : album);
 		model.addAttribute("items", viewService.toMusicItems(albumMusic));
 		return ALBUM_VIEW;

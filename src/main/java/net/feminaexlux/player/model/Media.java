@@ -4,19 +4,13 @@
 package net.feminaexlux.player.model;
 
 import net.feminaexlux.player.model.table.Directory;
-import net.feminaexlux.player.model.table.Mood;
-import net.feminaexlux.player.model.table.MoodResource;
 import net.feminaexlux.player.model.table.Music;
-import net.feminaexlux.player.model.table.NormalizedText;
-import net.feminaexlux.player.model.table.Playlist;
-import net.feminaexlux.player.model.table.PlaylistEntry;
-import net.feminaexlux.player.model.table.Principal;
-import net.feminaexlux.player.model.table.PrincipalResourceAccess;
-import net.feminaexlux.player.model.table.PrincipalRole;
 import net.feminaexlux.player.model.table.Resource;
 import net.feminaexlux.player.model.table.Type;
 import net.feminaexlux.player.model.table.TypeExtension;
-import org.jooq.Table;
+import net.feminaexlux.player.model.table.User;
+import net.feminaexlux.player.model.table.UserPlayed;
+import net.feminaexlux.player.model.table.UserRole;
 import org.jooq.impl.SchemaImpl;
 
 import javax.annotation.Generated;
@@ -37,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Media extends SchemaImpl {
 
-	private static final long serialVersionUID = -993278684;
+	private static final long serialVersionUID = -1851310360;
 
 	/**
 	 * The reference instance of <code>media</code>
@@ -52,26 +46,21 @@ public class Media extends SchemaImpl {
 	}
 
 	@Override
-	public final List<Table<?>> getTables() {
+	public final List<org.jooq.Table<?>> getTables() {
 		List result = new ArrayList();
 		result.addAll(getTables0());
 		return result;
 	}
 
-	private final List<Table<?>> getTables0() {
-		return Arrays.<Table<?>>asList(
+	private final List<org.jooq.Table<?>> getTables0() {
+		return Arrays.<org.jooq.Table<?>>asList(
 				Directory.DIRECTORY,
-				Mood.MOOD,
-				MoodResource.MOOD_RESOURCE,
 				Music.MUSIC,
-				NormalizedText.NORMALIZED_TEXT,
-				Playlist.PLAYLIST,
-				PlaylistEntry.PLAYLIST_ENTRY,
-				Principal.PRINCIPAL,
-				PrincipalRole.PRINCIPAL_ROLE,
-				PrincipalResourceAccess.PRINCIPAL_RESOURCE_ACCESS,
 				Resource.RESOURCE,
 				Type.TYPE,
-				TypeExtension.TYPE_EXTENSION);
+				TypeExtension.TYPE_EXTENSION,
+				User.USER,
+				UserPlayed.USER_PLAYED,
+				UserRole.USER_ROLE);
 	}
 }

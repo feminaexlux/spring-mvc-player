@@ -24,8 +24,8 @@ public class ArtistController extends AbstractMusicController {
 	}
 
 	@RequestMapping(value = "/{artist}", method = RequestMethod.GET)
-	public String list(@PathVariable final String artist, final Model model) {
-		List<MusicRecord> artistMusic = musicService.findByArtist(artist);
+	public String byArtist(@PathVariable final String artist, final Model model) {
+		List<MusicRecord> artistMusic = musicService.findByArtistUrl(artist);
 		model.addAttribute("artist", CollectionUtils.isNotEmpty(artistMusic) ? artistMusic.get(0).getArtist() : artist);
 		model.addAttribute("items", viewService.toMusicItems(artistMusic));
 		return ARTIST_VIEW;

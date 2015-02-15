@@ -7,7 +7,6 @@ import net.feminaexlux.player.model.Key;
 import net.feminaexlux.player.model.Media;
 import net.feminaexlux.player.model.table.record.DirectoryRecord;
 import org.jooq.Field;
-import org.jooq.ForeignKey;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -31,7 +30,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Directory extends TableImpl<DirectoryRecord> {
 
-	private static final long serialVersionUID = 1917587952;
+	private static final long serialVersionUID = -942365848;
 
 	/**
 	 * The reference instance of <code>media.directory</code>
@@ -47,19 +46,19 @@ public class Directory extends TableImpl<DirectoryRecord> {
 	}
 
 	/**
-	 * The column <code>media.directory.location</code>.
+	 * The column <code>media.directory.directory</code>.
 	 */
-	public final TableField<DirectoryRecord, String> LOCATION = createField("location", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+	public final TableField<DirectoryRecord, String> DIRECTORY_ = createField("directory", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * The column <code>media.directory.type</code>.
 	 */
-	public final TableField<DirectoryRecord, String> TYPE = createField("type", SQLDataType.VARCHAR.length(50).nullable(false), this, "");
+	public final TableField<DirectoryRecord, String> TYPE = createField("type", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.directory.lastScanned</code>.
+	 * The column <code>media.directory.last_scanned</code>.
 	 */
-	public final TableField<DirectoryRecord, java.sql.Timestamp> LASTSCANNED = createField("lastScanned", SQLDataType.TIMESTAMP.nullable(false).defaulted(true), this, "");
+	public final TableField<DirectoryRecord, java.sql.Timestamp> LAST_SCANNED = createField("last_scanned", SQLDataType.TIMESTAMP, this, "");
 
 	/**
 	 * Create a <code>media.directory</code> table reference
@@ -97,14 +96,6 @@ public class Directory extends TableImpl<DirectoryRecord> {
 	@Override
 	public List<UniqueKey<DirectoryRecord>> getKeys() {
 		return Arrays.<UniqueKey<DirectoryRecord>>asList(Key.KEY_DIRECTORY_PRIMARY);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public List<ForeignKey<DirectoryRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<DirectoryRecord, ?>>asList(Key.FK1_DIRECTORY_TYPE);
 	}
 
 	/**

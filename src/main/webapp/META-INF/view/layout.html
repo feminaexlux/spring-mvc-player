@@ -13,7 +13,9 @@
         </h1>
         <nav>
             <a href="/music">Music</a>
-            <a sec:authorize-url="/settings" href="/settings">Settings</a>
+            <span sec:authorize-url="/settings">
+                <a href="/settings">Settings</a>
+            </span>
             <a href="/logout">Logout</a>
         </nav>
     </header>

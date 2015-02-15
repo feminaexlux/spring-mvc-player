@@ -35,7 +35,7 @@ public class DirectoryServiceImpl implements DirectoryService {
 	public List<DirectoryRecord> search(final String query) {
 		return database.select()
 				.from(DIRECTORY)
-				.where(DIRECTORY.LOCATION.contains(query))
+				.where(DIRECTORY.DIRECTORY_.contains(query))
 				.fetchInto(DirectoryRecord.class);
 	}
 }

@@ -12,11 +12,10 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 	public static final Boolean DEBUG = Boolean.parseBoolean(System.getProperty("player.log.debug", "false"));
 
 	@Override
-	public void onStartup(ServletContext servletContext) throws ServletException {
+	public void onStartup(final ServletContext servletContext) throws ServletException {
 		super.onStartup(servletContext);
 
-		Logger.getLogger("org.jaudiotagger").setLevel(Level.SEVERE);
-		Logger.getLogger("org.jooq").setLevel(Level.SEVERE);
+		Logger.getLogger("org.jaudiotagger").setLevel(Level.WARNING);
 	}
 
 	@Override
@@ -40,4 +39,5 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
 				"/"
 		};
 	}
+
 }

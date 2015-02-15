@@ -1,10 +1,10 @@
 package net.feminaexlux.player.service.security;
 
 import net.feminaexlux.player.exception.UserHasNoRolesException;
-import net.feminaexlux.player.model.table.Principal;
-import net.feminaexlux.player.model.table.PrincipalRole;
-import net.feminaexlux.player.model.table.record.PrincipalRecord;
-import net.feminaexlux.player.model.table.record.PrincipalRoleRecord;
+import net.feminaexlux.player.model.table.UserRole;
+import net.feminaexlux.player.model.table.record.UserRecord;
+import net.feminaexlux.player.model.table.record.UserRoleRecord;
+import net.feminaexlux.player.service.UserLoginService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
@@ -13,31 +13,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+import static net.feminaexlux.player.model.table.User.USER;
 
-	private static final Logger LOG = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+@Service
+public class UserLoginServiceImpl implements UserLoginService {
+
+	private static final Logger LOG = LoggerFactory.getLogger(UserLoginServiceImpl.class);
 
 	@Autowired
 	private DSLContext database;
 
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		PrincipalRecord principal = getPrincipal(username);
+		UserRecord principal = getUser(username);
 		if (principal == null) {
 			LOG.warn("Failed to find user by {}", username);
 			throw new UsernameNotFoundException("Username " + username + " not found");
 		}
 
-		List<PrincipalRoleRecord> principalRoles = getPrincipalRoles(username);
+		List<UserRoleRecord> principalRoles = getUserRoles(username);
 		if (CollectionUtils.isEmpty(principalRoles)) {
 			LOG.warn("User {} has no roles", username);
 			throw new UserHasNoRolesException("Roles not found for " + username);
@@ -46,26 +48,34 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		return new MediaUserDetails(principal, principalRoles);
 	}
 
-	private PrincipalRecord getPrincipal(final String username) {
-		return database
-				.select().from(Principal.PRINCIPAL)
-				.where(Principal.PRINCIPAL.USERNAME.equal(username))
-				.fetchOneInto(PrincipalRecord.class);
+	@Override
+	public void updateLastLogin(final String username) {
+		database.update(USER)
+				.set(USER.LAST_LOGIN, new Timestamp(System.currentTimeMillis()))
+				.where(USER.USERNAME.equal(username))
+				.execute();
 	}
 
-	private List<PrincipalRoleRecord> getPrincipalRoles(final String username) {
+	private UserRecord getUser(final String username) {
 		return database
-				.select().from(PrincipalRole.PRINCIPAL_ROLE)
-				.where(PrincipalRole.PRINCIPAL_ROLE.USERNAME.equal(username))
-				.fetchInto(PrincipalRoleRecord.class);
+				.select().from(USER)
+				.where(USER.USERNAME.equal(username))
+				.fetchOneInto(UserRecord.class);
+	}
+
+	private List<UserRoleRecord> getUserRoles(final String username) {
+		return database
+				.select().from(UserRole.USER_ROLE)
+				.where(UserRole.USER_ROLE.USERNAME.equal(username))
+				.fetchInto(UserRoleRecord.class);
 	}
 
 	public static final class MediaUserDetails implements UserDetails {
 
-		private final PrincipalRecord principal;
-		private final List<PrincipalRoleRecord> roles;
+		private final UserRecord principal;
+		private final List<UserRoleRecord> roles;
 
-		public MediaUserDetails(final PrincipalRecord principal, final List<PrincipalRoleRecord> roles) {
+		public MediaUserDetails(final UserRecord principal, final List<UserRoleRecord> roles) {
 			this.principal = principal;
 			this.roles = roles;
 		}

@@ -32,7 +32,7 @@ import java.util.List;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public class Resource extends TableImpl<ResourceRecord> {
 
-	private static final long serialVersionUID = -18975157;
+	private static final long serialVersionUID = 1045138819;
 
 	/**
 	 * The reference instance of <code>media.resource</code>
@@ -50,7 +50,7 @@ public class Resource extends TableImpl<ResourceRecord> {
 	/**
 	 * The column <code>media.resource.checksum</code>.
 	 */
-	public final TableField<ResourceRecord, String> CHECKSUM = createField("checksum", SQLDataType.VARCHAR.length(40).nullable(false), this, "");
+	public final TableField<ResourceRecord, String> CHECKSUM = createField("checksum", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
 	 * The column <code>media.resource.directory</code>.
@@ -58,19 +58,19 @@ public class Resource extends TableImpl<ResourceRecord> {
 	public final TableField<ResourceRecord, String> DIRECTORY = createField("directory", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.resource.name</code>.
+	 * The column <code>media.resource.type</code>.
 	 */
-	public final TableField<ResourceRecord, String> NAME = createField("name", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+	public final TableField<ResourceRecord, String> TYPE = createField("type", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.resource.lastAccessed</code>.
+	 * The column <code>media.resource.path</code>.
 	 */
-	public final TableField<ResourceRecord, Timestamp> LASTACCESSED = createField("lastAccessed", SQLDataType.TIMESTAMP, this, "");
+	public final TableField<ResourceRecord, String> PATH = createField("path", SQLDataType.VARCHAR.length(255).nullable(false), this, "");
 
 	/**
-	 * The column <code>media.resource.updated</code>.
+	 * The column <code>media.resource.last_updated</code>.
 	 */
-	public final TableField<ResourceRecord, Timestamp> UPDATED = createField("updated", SQLDataType.TIMESTAMP, this, "");
+	public final TableField<ResourceRecord, Timestamp> LAST_UPDATED = createField("last_updated", SQLDataType.TIMESTAMP, this, "");
 
 	/**
 	 * Create a <code>media.resource</code> table reference
@@ -115,7 +115,7 @@ public class Resource extends TableImpl<ResourceRecord> {
 	 */
 	@Override
 	public List<ForeignKey<ResourceRecord, ?>> getReferences() {
-		return Arrays.<ForeignKey<ResourceRecord, ?>>asList(Key.FK1_RESOURCE_DIRECTORY);
+		return Arrays.<ForeignKey<ResourceRecord, ?>>asList(Key.FK1_RESOURCE_DIRECTORY_DIRECTORY, Key.FK2_RESOURCE_DIRECTORY_TYPE, Key.FK3_RESOURCE_TYPE_TYPE);
 	}
 
 	/**
