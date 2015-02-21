@@ -11,11 +11,16 @@
 /*!40101 SET @OLD_SQL_MODE = @@SQL_MODE, SQL_MODE = 'NO_AUTO_VALUE_ON_ZERO' */;
 
 -- Dumping structure for table media.directory
+DROP TABLE IF EXISTS `directory`;
 CREATE TABLE IF NOT EXISTS `directory` (
   `directory`    VARCHAR(255) NOT NULL,
   `type`         VARCHAR(255) NOT NULL,
   `last_scanned` DATETIME DEFAULT NULL,
-  PRIMARY KEY (`directory`, `type`)
+  PRIMARY KEY (`directory`, `type`),
+  KEY `FK1_directory_type` (`type`),
+  CONSTRAINT `FK1_directory_type` FOREIGN KEY (`type`) REFERENCES `type` (`type`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 )
   ENGINE = InnoDB
   DEFAULT CHARSET = utf8;
@@ -24,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `directory` (
 
 
 -- Dumping structure for table media.music
+DROP TABLE IF EXISTS `music`;
 CREATE TABLE IF NOT EXISTS `music` (
   `checksum`     VARCHAR(255) NOT NULL,
   `artist`       VARCHAR(255) NOT NULL,
@@ -46,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `music` (
 
 
 -- Dumping structure for table media.resource
+DROP TABLE IF EXISTS `resource`;
 CREATE TABLE IF NOT EXISTS `resource` (
   `checksum`     VARCHAR(255) NOT NULL,
   `directory`    VARCHAR(255) NOT NULL,
@@ -72,6 +79,7 @@ CREATE TABLE IF NOT EXISTS `resource` (
 
 
 -- Dumping structure for table media.type
+DROP TABLE IF EXISTS `type`;
 CREATE TABLE IF NOT EXISTS `type` (
   `type` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`type`)
@@ -83,6 +91,7 @@ CREATE TABLE IF NOT EXISTS `type` (
 
 
 -- Dumping structure for table media.type_extension
+DROP TABLE IF EXISTS `type_extension`;
 CREATE TABLE IF NOT EXISTS `type_extension` (
   `type`      VARCHAR(255) NOT NULL,
   `extension` VARCHAR(255) NOT NULL,
@@ -98,6 +107,7 @@ CREATE TABLE IF NOT EXISTS `type_extension` (
 
 
 -- Dumping structure for table media.user
+DROP TABLE IF EXISTS `user`;
 CREATE TABLE IF NOT EXISTS `user` (
   `username`   VARCHAR(255) NOT NULL,
   `password`   VARCHAR(255) NOT NULL,
@@ -112,6 +122,7 @@ CREATE TABLE IF NOT EXISTS `user` (
 
 
 -- Dumping structure for table media.user_played
+DROP TABLE IF EXISTS `user_played`;
 CREATE TABLE IF NOT EXISTS `user_played` (
   `username`    VARCHAR(255) NOT NULL,
   `resource`    VARCHAR(255) NOT NULL,
@@ -133,6 +144,7 @@ CREATE TABLE IF NOT EXISTS `user_played` (
 
 
 -- Dumping structure for table media.user_role
+DROP TABLE IF EXISTS `user_role`;
 CREATE TABLE IF NOT EXISTS `user_role` (
   `username` VARCHAR(255) NOT NULL,
   `role`     VARCHAR(255) NOT NULL,

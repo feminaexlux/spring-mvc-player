@@ -1,7 +1,6 @@
 package net.feminaexlux.player.service.security;
 
 import net.feminaexlux.player.exception.UserHasNoRolesException;
-import net.feminaexlux.player.model.table.UserRole;
 import net.feminaexlux.player.model.table.record.UserRecord;
 import net.feminaexlux.player.model.table.record.UserRoleRecord;
 import net.feminaexlux.player.service.UserLoginService;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.feminaexlux.player.model.table.User.USER;
+import static net.feminaexlux.player.model.table.UserRole.USER_ROLE;
 
 @Service
 public class UserLoginServiceImpl implements UserLoginService {
@@ -33,19 +33,19 @@ public class UserLoginServiceImpl implements UserLoginService {
 
 	@Override
 	public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-		UserRecord principal = getUser(username);
-		if (principal == null) {
+		UserRecord user = getUser(username);
+		if (user == null) {
 			LOG.warn("Failed to find user by {}", username);
 			throw new UsernameNotFoundException("Username " + username + " not found");
 		}
 
-		List<UserRoleRecord> principalRoles = getUserRoles(username);
-		if (CollectionUtils.isEmpty(principalRoles)) {
+		List<UserRoleRecord> userRoles = getUserRoles(username);
+		if (CollectionUtils.isEmpty(userRoles)) {
 			LOG.warn("User {} has no roles", username);
 			throw new UserHasNoRolesException("Roles not found for " + username);
 		}
 
-		return new MediaUserDetails(principal, principalRoles);
+		return new MediaUserDetails(user, userRoles);
 	}
 
 	@Override
@@ -64,19 +64,18 @@ public class UserLoginServiceImpl implements UserLoginService {
 	}
 
 	private List<UserRoleRecord> getUserRoles(final String username) {
-		return database
-				.select().from(UserRole.USER_ROLE)
-				.where(UserRole.USER_ROLE.USERNAME.equal(username))
+		return database.selectFrom(USER_ROLE)
+				.where(USER_ROLE.USERNAME.equal(username))
 				.fetchInto(UserRoleRecord.class);
 	}
 
 	public static final class MediaUserDetails implements UserDetails {
 
-		private final UserRecord principal;
+		private final UserRecord user;
 		private final List<UserRoleRecord> roles;
 
-		public MediaUserDetails(final UserRecord principal, final List<UserRoleRecord> roles) {
-			this.principal = principal;
+		public MediaUserDetails(final UserRecord user, final List<UserRoleRecord> roles) {
+			this.user = user;
 			this.roles = roles;
 		}
 
@@ -89,12 +88,12 @@ public class UserLoginServiceImpl implements UserLoginService {
 
 		@Override
 		public String getPassword() {
-			return principal.getPassword();
+			return user.getPassword();
 		}
 
 		@Override
 		public String getUsername() {
-			return principal.getUsername();
+			return user.getUsername();
 		}
 
 		@Override

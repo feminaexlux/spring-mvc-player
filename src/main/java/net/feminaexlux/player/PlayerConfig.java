@@ -13,9 +13,12 @@ import net.feminaexlux.player.service.impl.StreamingServiceImpl;
 import net.feminaexlux.player.service.impl.UserServiceImpl;
 import net.feminaexlux.player.service.impl.ViewServiceImpl;
 import org.jooq.DSLContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -23,9 +26,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @Configuration
+@EnableAsync
 @EnableScheduling
 public class PlayerConfig {
 
+	private static final Logger LOG = LoggerFactory.getLogger(PlayerConfig.class);
 	private static final int TWO_MINUTES = 2 * 60 * 1000;
 
 	@Autowired
@@ -63,6 +68,7 @@ public class PlayerConfig {
 
 	@Scheduled(initialDelay = TWO_MINUTES, fixedDelay = TWO_MINUTES)
 	public void keepAlive() throws SQLException {
+		LOG.info("Sending keepalive query at {}", System.currentTimeMillis());
 		database.query("select 1").execute();
 	}
 

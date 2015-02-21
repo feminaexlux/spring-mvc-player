@@ -7,6 +7,7 @@ import net.feminaexlux.player.model.Key;
 import net.feminaexlux.player.model.Media;
 import net.feminaexlux.player.model.table.record.DirectoryRecord;
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
@@ -96,6 +97,14 @@ public class Directory extends TableImpl<DirectoryRecord> {
 	@Override
 	public List<UniqueKey<DirectoryRecord>> getKeys() {
 		return Arrays.<UniqueKey<DirectoryRecord>>asList(Key.KEY_DIRECTORY_PRIMARY);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ForeignKey<DirectoryRecord, ?>> getReferences() {
+		return Arrays.<ForeignKey<DirectoryRecord, ?>>asList(Key.FK1_DIRECTORY_TYPE);
 	}
 
 	/**

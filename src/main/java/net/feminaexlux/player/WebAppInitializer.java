@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-	public static final Boolean DEBUG = Boolean.parseBoolean(System.getProperty("player.log.debug", "false"));
-
 	@Override
 	public void onStartup(final ServletContext servletContext) throws ServletException {
 		super.onStartup(servletContext);

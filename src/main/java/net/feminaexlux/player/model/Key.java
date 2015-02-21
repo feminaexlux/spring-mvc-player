@@ -61,6 +61,7 @@ public class Key {
 	// FOREIGN KEY definitions
 	// -------------------------------------------------------------------------
 
+	public static final ForeignKey<DirectoryRecord, TypeRecord> FK1_DIRECTORY_TYPE = ForeignKeys0.FK1_DIRECTORY_TYPE;
 	public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = ForeignKeys0.FK1_MUSIC_RESOURCE;
 	public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY_DIRECTORY = ForeignKeys0.FK1_RESOURCE_DIRECTORY_DIRECTORY;
 	public static final ForeignKey<ResourceRecord, TypeRecord> FK2_RESOURCE_DIRECTORY_TYPE = ForeignKeys0.FK2_RESOURCE_DIRECTORY_TYPE;
@@ -88,6 +89,7 @@ public class Key {
 
 	private static class ForeignKeys0 extends AbstractKeys {
 
+		public static final ForeignKey<DirectoryRecord, TypeRecord> FK1_DIRECTORY_TYPE = createForeignKey(Key.KEY_TYPE_PRIMARY, Directory.DIRECTORY, Directory.DIRECTORY.TYPE);
 		public static final ForeignKey<MusicRecord, ResourceRecord> FK1_MUSIC_RESOURCE = createForeignKey(Key.KEY_RESOURCE_PRIMARY, Music.MUSIC, Music.MUSIC.CHECKSUM);
 		public static final ForeignKey<ResourceRecord, DirectoryRecord> FK1_RESOURCE_DIRECTORY_DIRECTORY = createForeignKey(Key.KEY_DIRECTORY_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.DIRECTORY);
 		public static final ForeignKey<ResourceRecord, TypeRecord> FK2_RESOURCE_DIRECTORY_TYPE = createForeignKey(Key.KEY_TYPE_PRIMARY, Resource.RESOURCE, Resource.RESOURCE.TYPE);

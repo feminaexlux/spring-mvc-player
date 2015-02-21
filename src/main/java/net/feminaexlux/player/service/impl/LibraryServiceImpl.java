@@ -138,7 +138,7 @@ public class LibraryServiceImpl implements LibraryService {
 					String hash = hash(file);
 
 					ResourceRecord resource = getNewOrExistingResource(hash);
-					if (resource.getLastUpdated() != null && resource.getLastUpdated().getTime() < file.toFile().lastModified()) {
+					if (resource.getLastUpdated() != null && resource.getLastUpdated().getTime() > file.toFile().lastModified()) {
 						return FileVisitResult.CONTINUE;
 					}
 
@@ -172,6 +172,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		private void updateResourceProperties(final Path file, final String hash) {
 			ResourceRecord resourceRecord = getNewOrExistingResource(hash);
+			resourceRecord.setType(MediaType.MUSIC.name());
 			resourceRecord.setChecksum(hash);
 			resourceRecord.setDirectory(directory);
 			resourceRecord.setPath(file.toString().substring(directory.length()));
